@@ -29,7 +29,7 @@ class RequestManager {
         Date now = new Date();
         pendingRequests.forEach((request, date) -> {
             if (((now.getTime() - date.getTime()) / 1000) > SafeTP.getTimeoutValue()) {
-                SafeTP.sendMessage(request.getRequester(), "Your Teleport Request for " + request.getTarget().getDisplayName() + ChatColor.RED + " timed out." + ChatColor.RESET);
+                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your Teleport Request for " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.RED + " timed out.");
                 pendingRequests.remove(request);
             }
         });
