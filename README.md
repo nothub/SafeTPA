@@ -1,9 +1,9 @@
 # SafeTP
+<a href="https://github.com/blockparole/SafeTP/releases/latest" alt="Download"><img src="https://img.shields.io/github/downloads/blockparole/SafeTP/latest/total.svg?label=download%20latest&style=popout-square" /></a>
+<a href="https://github.com/blockparole/SafeTP" alt="Download"><img src="https://img.shields.io/github/languages/code-size/blockparole/SafeTP.svg?label=repo%20size&style=popout-square" /></a>
 
 A simple Teleport Plugin for Minecraft that [vanishes](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-) Players while they are teleporting.  
 `/tpa NAME` `/tpy NAME` `/tpn NAME`
-
-##### [Download](https://github.com/blockparole/SafeTP/releases/)
 
 ##### Open Project in IntelliJ:
 1. Import the Project from Git
