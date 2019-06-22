@@ -14,7 +14,7 @@ public final class SafeTP extends JavaPlugin {
 
     private RequestManager requestsManager = new RequestManager();
 
-    private static String[] loadMessages = {"SafeTP works best if you run Paper Spigot on a Toaster!", "Join 0b0t.org, World oldest Minecraft Server!", "(^_^) (0w0) (^.^)"};
+    private static String[] loadMessages = {"SafeTP works best if you run Paper Spigot on a Toaster!", "Join 0b0t.org, the Worlds oldest Minecraft Server!", "(^_^) (0w0) (^.^)"};
     private static int timeoutValue = 0;
 
     @Override
