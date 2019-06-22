@@ -1,0 +1,33 @@
+name: SafeTP
+version: @version@
+description: tpa
+authors: [blockparole]
+main: not.hub.safetp.SafeTP
+
+commands:
+  tpa:
+    description: Send TP Request (/tpa NAME .. or .. /tpask NAME)
+    aliases: [tpask]
+    permission: tpa.tpa
+    permission-message: Insufficient permissions, you should harass your Admin because of this!
+  tpy:
+    description: Accept TP Request (/tpy NAME .. or .. /tpaccept NAME)
+    aliases: [tpaccept]
+    permission: tpa.tpy
+    permission-message: Insufficient permissions, you should harass your Admin because of this!
+  tpn:
+    description: Deny TP Request (/tpn NAME .. or .. /tpdeny NAME)
+    aliases: [tpdeny]
+    permission: tpa.tpn
+    permission-message: Insufficient permissions, you should harass your Admin because of this!
+
+permissions:
+  tpa.tpa:
+    description: Send TP Request
+    default: true
+  tpa.tpy:
+    description: Accept TP Request
+    default: true
+  tpa.tpn:
+    description: Deny TP Request
+    default: true
