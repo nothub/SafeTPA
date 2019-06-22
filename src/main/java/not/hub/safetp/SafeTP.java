@@ -9,7 +9,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 
-@SuppressWarnings("unused")
 public final class SafeTP extends JavaPlugin {
 
     private RequestManager requestsManager = new RequestManager();
@@ -29,11 +28,7 @@ public final class SafeTP extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
 
-        Player sender = null;
-
-        if (commandSender instanceof Player) {
-            sender = getServer().getPlayer(commandSender.getName());
-        }
+        Player sender = (Player) commandSender;
 
         if (sender == null) {
             return false;

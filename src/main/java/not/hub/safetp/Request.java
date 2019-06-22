@@ -2,7 +2,6 @@ package not.hub.safetp;
 
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("unused")
 class Request {
 
     private final Player target;

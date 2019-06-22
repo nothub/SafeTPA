@@ -9,7 +9,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("unused")
 class RequestManager {
 
     private final ConcurrentHashMap<Request, Date> pendingRequests;
