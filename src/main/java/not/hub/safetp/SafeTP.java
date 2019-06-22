@@ -129,16 +129,16 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        PaperLib.teleportAsync(tpRequester, tpTarget.getLocation()).thenAccept(result -> {
+        getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-            getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
-
-            // vanishing player to defeat evil tp exploit demons
-            for (Player player : getServer().getOnlinePlayers()) {
-                if (!player.equals(tpRequester)) {
-                    player.hidePlayer(this, tpRequester);
-                }
+        // vanishing player to defeat evil tp exploit demons
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (!player.equals(tpRequester)) {
+                player.hidePlayer(this, tpRequester);
             }
+        }
+
+        PaperLib.teleportAsync(tpRequester, tpTarget.getLocation()).thenAccept(result -> {
 
             if (result) {
                 sendMessage(tpTarget, tpRequester.getDisplayName() + ChatColor.GOLD + " teleported to you!");
@@ -148,14 +148,14 @@ public final class SafeTP extends JavaPlugin {
                 sendMessage(tpRequester, ChatColor.RED + "Teleport failed, you should harass your Admin because of this!");
             }
 
-            // unvanish player
-            for (Player player : getServer().getOnlinePlayers()) {
-                if (!player.equals(tpRequester)) {
-                    player.showPlayer(this, tpRequester);
-                }
-            }
-
         });
+
+        // unvanish player
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (!player.equals(tpRequester)) {
+                player.showPlayer(this, tpRequester);
+            }
+        }
 
     }
 
