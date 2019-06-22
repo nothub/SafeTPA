@@ -8,3 +8,4 @@ target/
 
 # IntelliJ
 .idea
+*.iml
