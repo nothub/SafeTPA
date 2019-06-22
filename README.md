@@ -3,6 +3,8 @@
 A simple Teleport Plugin for Minecraft that [vanishes](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-) Players while they are teleporting.  
 `/tpa NAME` `/tpy NAME` `/tpn NAME`
 
+##### [Download](https://github.com/blockparole/SafeTP/releases/)
+
 ##### Open Project in IntelliJ:
 1. Get the [IntelliJ Minecraft Plugin](https://plugins.jetbrains.com/plugin/8327-minecraft-development)
 2. Import the Project from Git
