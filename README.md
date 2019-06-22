@@ -11,4 +11,5 @@ A simple Teleport Plugin for Minecraft that [vanishes](https://hub.spigotmc.org/
 3. Add Maven Run Configuration with Profiles: `clean package`
 
 This Project uses [PaperLib](https://github.com/PaperMC/PaperLib) and
-runs on [Paper](https://papermc.io/), [Spigot](https://www.spigotmc.org/) and [Bukkit](https://getbukkit.org/) Servers.
+runs on [Paper](https://papermc.io/) 1.12.2  
+Maybe also on other Versions and [Spigot](https://www.spigotmc.org/) or [Bukkit](https://getbukkit.org/) but idk for sure ¯\_(ツ)_/¯
