@@ -55,7 +55,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (command.getLabel().equalsIgnoreCase("tpa")) {
-            asktTP(getServer().getPlayer(args[0]), sender);
+            askTP(getServer().getPlayer(args[0]), sender);
             return true;
         }
 
@@ -73,7 +73,7 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    private void asktTP(Player tpTarget, Player tpRequester) {
+    private void askTP(Player tpTarget, Player tpRequester) {
 
         if (tpTarget == null || tpRequester == null) {
             return;
