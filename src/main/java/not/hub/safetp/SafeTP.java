@@ -1,23 +1,30 @@
 package not.hub.safetp;
 
 import io.papermc.lib.PaperLib;
+import not.hub.safetp.tasks.UnvanishRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class SafeTP extends JavaPlugin {
 
     private RequestManager requestsManager = new RequestManager();
 
     private static int timeoutValue = 0;
+    private int unvanishDelay;
 
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
         loadConfig();
         timeoutValue = getConfig().getInt("request-timeout-seconds");
+        unvanishDelay = getConfig().getInt("unvanish-delay-ticks");
+        if (unvanishDelay == 0) {
+            unvanishDelay = 1;
+        }
     }
 
     @Override
@@ -66,6 +73,23 @@ public final class SafeTP extends JavaPlugin {
 
         return false;
 
+    }
+
+    static void sendMessage(Player player, String message) {
+        player.sendMessage(message);
+    }
+
+
+    static int getTimeoutValue() {
+        return timeoutValue;
+    }
+
+    public void unvanish(Player player) {
+        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
+            if (!onlinePlayer.equals(player)) {
+                onlinePlayer.showPlayer(this, player);
+            }
+        }
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
@@ -131,13 +155,10 @@ public final class SafeTP extends JavaPlugin {
 
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        // vanishing player to defeat evil tp exploit demons
-        for (Player player : getServer().getOnlinePlayers()) {
-            if (!player.equals(tpRequester)) {
-                player.hidePlayer(this, tpRequester);
-            }
-        }
+        // vanish requester
+        vanish(tpRequester);
 
+        // execute teleport
         PaperLib.teleportAsync(tpRequester, tpTarget.getLocation()).thenAccept(result -> {
 
             if (result) {
@@ -150,12 +171,8 @@ public final class SafeTP extends JavaPlugin {
 
         });
 
-        // unvanish player
-        for (Player player : getServer().getOnlinePlayers()) {
-            if (!player.equals(tpRequester)) {
-                player.showPlayer(this, tpRequester);
-            }
-        }
+        // unvanish requester after n ticks
+        BukkitTask unvanishTask = new UnvanishRunnable(this, tpRequester).runTaskLater(this, unvanishDelay);
 
     }
 
@@ -189,18 +206,19 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    static void sendMessage(Player player, String message) {
-        player.sendMessage(message);
+    private void vanish(Player player) {
+        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
+            if (!onlinePlayer.equals(player)) {
+                onlinePlayer.hidePlayer(this, player);
+            }
+        }
     }
 
     private void loadConfig() {
         getConfig().addDefault("request-timeout-seconds", 60);
+        getConfig().addDefault("unvanish-delay-ticks", 20);
         getConfig().options().copyDefaults(true);
         saveConfig();
-    }
-
-    static int getTimeoutValue() {
-        return timeoutValue;
     }
 
 }
