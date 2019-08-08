@@ -29,7 +29,7 @@ class RequestManager {
         Date now = new Date();
         pendingRequests.forEach((request, date) -> {
             if (((now.getTime() - date.getTime()) / 1000) > SafeTP.getTimeoutValue()) {
-                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your Teleport Request for " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
+                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your Teleport Request to " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
                 pendingRequests.remove(request);
             }
         });
@@ -70,8 +70,8 @@ class RequestManager {
         return exists.get();
     }
 
-    boolean requestNotExisting(Player target, Player requester) {
-        return !containsRequest(new Request(target, requester));
+    boolean requestExisting(Player target, Player requester) {
+        return containsRequest(new Request(target, requester));
     }
 
 }
