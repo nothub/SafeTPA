@@ -7,22 +7,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Random;
-
 public final class SafeTP extends JavaPlugin {
 
     private RequestManager requestsManager = new RequestManager();
 
-    private static String[] loadMessages = {"SafeTP works best if you run Paper Spigot on a Toaster!", "Join 0b0t.org, the Worlds oldest Minecraft Server!", "(^_^) (0w0) (^.^)"};
     private static int timeoutValue = 0;
 
     @Override
     public void onEnable() {
+        PaperLib.suggestPaper(this);
         loadConfig();
         timeoutValue = getConfig().getInt("request-timeout-seconds");
-        PaperLib.suggestPaper(this);
-        Random rand = new Random();
-        getLogger().info(ChatColor.LIGHT_PURPLE + loadMessages[rand.nextInt(loadMessages.length)] + ChatColor.RESET);
     }
 
     @Override
@@ -79,6 +74,11 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
+        if (requestsManager.requestExisting(tpTarget, tpRequester)) {
+            sendMessage(tpRequester, ChatColor.GOLD + "Please wait for " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + " to accept or deny your Request.");
+            return;
+        }
+
         sendMessage(tpRequester, ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + tpTarget.getDisplayName());
         sendMessage(tpTarget, tpRequester.getDisplayName() + ChatColor.GOLD + " wants to teleport to you.");
         sendMessage(tpTarget, ChatColor.GOLD + "Type " + ChatColor.RESET + "/tpy " + tpRequester.getName() + ChatColor.GOLD + " to accept or " + ChatColor.RESET + "/tpn " + tpRequester.getName() + ChatColor.GOLD + " to deny.");
@@ -93,7 +93,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (requestsManager.requestNotExisting(tpTarget, tpRequester)) {
+        if (!requestsManager.requestExisting(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no Request to accept from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
             return;
         }
@@ -112,7 +112,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (requestsManager.requestNotExisting(tpTarget, tpRequester)) {
+        if (!requestsManager.requestExisting(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no Request to deny from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
             return;
         }
