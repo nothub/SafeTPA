@@ -4,11 +4,12 @@ import io.papermc.lib.PaperLib;
 import not.hub.safetp.tasks.ClearOldRequestsRunnable;
 import not.hub.safetp.tasks.UnvanishRunnable;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 public final class SafeTP extends JavaPlugin {
 
@@ -16,14 +17,18 @@ public final class SafeTP extends JavaPlugin {
 
     private boolean multiRequest;
     private int timeoutValue;
+    private boolean tpaFromSpawn;
+    private int spawnRadius;
     private int unvanishDelay;
 
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
         loadConfig();
-        multiRequest = getConfig().getBoolean("multi-target-request");
+        multiRequest = getConfig().getBoolean("allow-multi-target-request");
+        tpaFromSpawn = getConfig().getBoolean("allow-tp-from-spawn");
         timeoutValue = getConfig().getInt("request-timeout-seconds");
+        spawnRadius = getConfig().getInt("spawn-radius");
         unvanishDelay = getConfig().getInt("unvanish-delay-ticks");
         if (unvanishDelay == 0) {
             unvanishDelay = 1;
@@ -98,6 +103,12 @@ public final class SafeTP extends JavaPlugin {
     private void askTP(Player tpTarget, Player tpRequester) {
 
         if (tpTarget == null || tpRequester == null) {
+            return;
+        }
+
+        if (!tpaFromSpawn && isAtSpawn(tpRequester)) {
+            getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
+            sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
             return;
         }
 
@@ -202,6 +213,22 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
+    private boolean isAtSpawn(Player requester) {
+
+        Location loc = requester.getLocation();
+        World.Environment dim = requester.getWorld().getEnvironment();
+
+        // end spawn is not spawn
+        if (dim.equals(World.Environment.THE_END)) {
+            return false;
+        }
+
+        boolean isNether = dim.equals(World.Environment.NETHER);
+
+        return Math.abs(loc.getX()) * (isNether ? 8 : 1) <= spawnRadius && Math.abs(loc.getZ()) * (isNether ? 8 : 1) <= spawnRadius;
+
+    }
+
     private String sanitizeUsername(String name) {
 
         name = name.replaceAll("[^a-zA-Z0-9_]", "");
@@ -223,8 +250,10 @@ public final class SafeTP extends JavaPlugin {
     }
 
     private void loadConfig() {
-        getConfig().addDefault("multi-target-request", true);
+        getConfig().addDefault("allow-multi-target-request", true);
+        getConfig().addDefault("allow-tp-from-spawn", true);
         getConfig().addDefault("request-timeout-seconds", 60);
+        getConfig().addDefault("spawn-radius", 1500);
         getConfig().addDefault("unvanish-delay-ticks", 20);
         getConfig().options().copyDefaults(true);
         saveConfig();
