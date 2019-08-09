@@ -28,7 +28,7 @@ public final class SafeTP extends JavaPlugin {
         if (unvanishDelay == 0) {
             unvanishDelay = 1;
         }
-        BukkitTask cooldownTask = new ClearOldRequestsRunnable(this).runTaskTimer(this, 0, 20);
+        new ClearOldRequestsRunnable(this).runTaskTimer(this, 0, 20);
     }
 
     @Override
@@ -180,7 +180,7 @@ public final class SafeTP extends JavaPlugin {
         });
 
         // unvanish requester after n ticks
-        BukkitTask unvanishTask = new UnvanishRunnable(this, tpRequester).runTaskLater(this, unvanishDelay);
+        new UnvanishRunnable(this, tpRequester).runTaskLater(this, unvanishDelay);
 
     }
 
