@@ -174,6 +174,13 @@ public final class SafeTP extends JavaPlugin {
 
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
+        // dismount
+        Optional<Entity> vehicle = Optional.ofNullable(tpRequester.getVehicle());
+        if (vehicle.isPresent()) {
+            getLogger().info("Dismounting " + tpRequester.getDisplayName() + " from " + vehicle.get().getName() + " before teleporting");
+            vehicle.get().eject();
+        }
+        
         // vanish requester
         vanish(tpRequester);
 
