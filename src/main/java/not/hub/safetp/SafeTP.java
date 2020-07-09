@@ -16,13 +16,17 @@ import java.util.Optional;
 
 public final class SafeTP extends JavaPlugin {
 
-    private RequestManager requestManager = new RequestManager();
+    private final RequestManager requestManager = new RequestManager();
 
     private boolean multiRequest;
     private int timeoutValue;
     private boolean tpaFromSpawn;
     private int spawnRadius;
     private int unvanishDelay;
+
+    static void sendMessage(Player player, String message) {
+        player.sendMessage(message);
+    }
 
     @Override
     public void onEnable() {
@@ -51,6 +55,8 @@ public final class SafeTP extends JavaPlugin {
         if (sender == null) {
             return false;
         }
+
+        // TODO: add timeout as command spam protection
 
         if (args.length == 0) {
             sendMessage(sender, ChatColor.GOLD + "You need to run this command with an argument, like this:");
@@ -83,12 +89,13 @@ public final class SafeTP extends JavaPlugin {
             return true;
         }
 
+        if (command.getLabel().equalsIgnoreCase("tpt")) {
+            toggleTP(sender);
+            return true;
+        }
+
         return false;
 
-    }
-
-    static void sendMessage(Player player, String message) {
-        player.sendMessage(message);
     }
 
     public void clearOldRequests() {
@@ -112,6 +119,11 @@ public final class SafeTP extends JavaPlugin {
         if (!tpaFromSpawn && isAtSpawn(tpRequester)) {
             getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
+            return;
+        }
+
+        if (isToggled(tpTarget)) {
+            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
             return;
         }
 
@@ -183,7 +195,7 @@ public final class SafeTP extends JavaPlugin {
             getLogger().info("Dismounting " + tpRequester.getDisplayName() + " from " + vehicle.get().getName() + " before teleporting");
             vehicle.get().eject();
         }
-        
+
         // vanish requester
         vanish(tpRequester);
 
@@ -203,6 +215,28 @@ public final class SafeTP extends JavaPlugin {
         // unvanish requester after n ticks
         new UnvanishRunnable(this, tpRequester).runTaskLater(this, unvanishDelay);
 
+    }
+
+    private void toggleTP(Player toggleRequester) {
+
+        if (toggleRequester == null) {
+            return;
+        }
+
+        boolean currentToggle = isToggled(toggleRequester);
+        getConfig().set("toggle-" + toggleRequester.getUniqueId().toString(), !currentToggle);
+
+        if (currentToggle) {
+            sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
+        } else {
+            // TODO: Clear all requests targeted at toggleRequester
+            sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
+        }
+
+    }
+
+    private boolean isToggled(Player player) {
+        return getConfig().getBoolean("toggle-" + player.getUniqueId().toString());
     }
 
     private boolean isInvalidTarget(String args) {
