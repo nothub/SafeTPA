@@ -20,6 +20,11 @@ commands:
     aliases: [tpdeny]
     permission: tpa.tpn
     permission-message: Insufficient permissions, you should harass your Admin because of this!
+  tpt:
+    description: Toggle TP Requests (/tpt)
+    aliases: [tptoggle]
+    permission: tpa.tpt
+    permission-message: Insufficient permissions, you should harass your Admin because of this!
 
 permissions:
   tpa.tpa:
@@ -31,3 +36,6 @@ permissions:
   tpa.tpn:
     description: Deny TP Request
     default: true
+  tpa.tpt:
+   description: Toggle TP Requests
+   default: true
