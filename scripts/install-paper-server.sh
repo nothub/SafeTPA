@@ -4,7 +4,7 @@ set -e
 
 echo "downloading paper 1.12.2 (1618)"
 
-mkdir -p ../server/plugins/bStats
+mkdir -p ../server
 cd ../server
 
 curl https://papermc.io/api/v1/paper/1.12.2/1618/download -o paper.jar
@@ -19,6 +19,8 @@ fi
 {
   echo "eula=true"
 } > ../server/eula.txt
+
+mkdir -p ../server/plugins/bStats
 
 {
   echo "enabled: false"
