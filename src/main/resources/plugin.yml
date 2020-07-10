@@ -21,7 +21,7 @@ commands:
     permission: tpa.tpn
     permission-message: Insufficient permissions, you should harass your Admin because of this!
   tpt:
-    description: Toggle TP Requests (/tpt)
+    description: Toggle TP Requests (/tpt .. or .. /tptoggle)
     aliases: [tptoggle]
     permission: tpa.tpt
     permission-message: Insufficient permissions, you should harass your Admin because of this!
