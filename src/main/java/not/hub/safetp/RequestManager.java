@@ -3,35 +3,31 @@ package not.hub.safetp;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class RequestManager {
 
-    private final ConcurrentHashMap<Request, Date> pendingRequests;
+    private final ConcurrentHashMap<Request, Long> pendingRequests;
 
     RequestManager() {
         this.pendingRequests = new ConcurrentHashMap<>();
     }
 
     void clearOldRequests(int timeoutValue) {
-
-        Date now = new Date();
-
-        pendingRequests.forEach((request, date) -> {
-            if (((now.getTime() - date.getTime()) / 1000) > timeoutValue) {
+        long time = System.currentTimeMillis();
+        pendingRequests.forEach((request, requestTime) -> {
+            if (((time - requestTime) / 1000) > timeoutValue) {
                 pendingRequests.remove(request);
                 SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
                 SafeTP.sendMessage(request.getTarget(), ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.getRequester().getDisplayName() + ChatColor.GOLD + " timed out.");
             }
         });
-
     }
 
     void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
-        pendingRequests.put(new Request(target, requester), new Date());
+        pendingRequests.put(new Request(target, requester), System.currentTimeMillis());
     }
 
     void removeRequests(Player target, Player requester) {
