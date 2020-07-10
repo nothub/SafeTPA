@@ -30,8 +30,11 @@ public final class SafeTP extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         PaperLib.suggestPaper(this);
+
         loadConfig();
+
         multiRequest = getConfig().getBoolean("allow-multi-target-request");
         tpaFromSpawn = getConfig().getBoolean("allow-tp-from-spawn");
         timeoutValue = getConfig().getInt("request-timeout-seconds");
@@ -40,7 +43,9 @@ public final class SafeTP extends JavaPlugin {
         if (unvanishDelay == 0) {
             unvanishDelay = 1;
         }
+
         new ClearOldRequestsRunnable(this).runTaskTimer(this, 0, 20);
+
     }
 
     @Override
@@ -57,6 +62,15 @@ public final class SafeTP extends JavaPlugin {
         }
 
         // TODO: add timeout as command spam protection
+
+        // 0 arg commands
+
+        if (command.getLabel().equalsIgnoreCase("tpt")) {
+            toggleRequestBlock(sender);
+            return true;
+        }
+
+        // > 0 arg commands
 
         if (args.length == 0) {
             sendMessage(sender, ChatColor.GOLD + "You need to run this command with an argument, like this:");
@@ -86,11 +100,6 @@ public final class SafeTP extends JavaPlugin {
 
         if (command.getLabel().equalsIgnoreCase("tpn")) {
             denyTP(sender, getServer().getPlayer(args[0]));
-            return true;
-        }
-
-        if (command.getLabel().equalsIgnoreCase("tpt")) {
-            toggleTP(sender);
             return true;
         }
 
@@ -127,12 +136,12 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (requestManager.isRequestExisting(tpTarget, tpRequester)) {
+        if (requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpRequester, ChatColor.GOLD + "Please wait for " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + " to accept or deny your request.");
             return;
         }
 
-        if (!multiRequest && requestManager.isRequester(tpRequester)) {
+        if (!multiRequest && requestManager.isRequestActiveByRequester(tpRequester)) {
             sendMessage(tpRequester, ChatColor.GOLD + "Please wait for your existing request to be accepted or denied.");
             return;
         }
@@ -151,7 +160,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (!requestManager.isRequestExisting(tpTarget, tpRequester)) {
+        if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
             return;
         }
@@ -160,7 +169,7 @@ public final class SafeTP extends JavaPlugin {
         sendMessage(tpRequester, ChatColor.GOLD + "Your request was " + ChatColor.GREEN + "accepted" + ChatColor.GOLD + ", teleporting to: " + ChatColor.RESET + tpTarget.getDisplayName());
 
         executeTP(tpTarget, tpRequester);
-        requestManager.removeRequest(tpTarget, tpRequester);
+        requestManager.removeRequests(tpTarget, tpRequester);
 
     }
 
@@ -170,14 +179,14 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (!requestManager.isRequestExisting(tpTarget, tpRequester)) {
+        if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
             return;
         }
 
         sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
         sendMessage(tpRequester, ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
-        requestManager.removeRequest(tpTarget, tpRequester);
+        requestManager.removeRequests(tpTarget, tpRequester);
 
     }
 
@@ -217,26 +226,31 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    private void toggleTP(Player toggleRequester) {
+    private void toggleRequestBlock(Player toggleRequester) {
 
         if (toggleRequester == null) {
             return;
         }
 
-        boolean currentToggle = isToggled(toggleRequester);
-        getConfig().set("toggle-" + toggleRequester.getUniqueId().toString(), !currentToggle);
-
-        if (currentToggle) {
+        if (isToggled(toggleRequester)) {
+            getConfig().set(generateRequestBlockPath(toggleRequester), null); // if toggle is off, we delete instead of setting false
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
         } else {
-            // TODO: Clear all requests targeted at toggleRequester
+            getConfig().set(generateRequestBlockPath(toggleRequester), true);
+            requestManager.removeRequestsByTarget(toggleRequester);
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
         }
 
+        saveConfig();
+
+    }
+
+    private String generateRequestBlockPath(Player player) {
+        return "requests-blocked-" + player.getUniqueId().toString();
     }
 
     private boolean isToggled(Player player) {
-        return getConfig().getBoolean("toggle-" + player.getUniqueId().toString());
+        return getConfig().getBoolean(generateRequestBlockPath(player));
     }
 
     private boolean isInvalidTarget(String args) {

@@ -21,49 +21,64 @@ class RequestManager {
 
         pendingRequests.forEach((request, date) -> {
             if (((now.getTime() - date.getTime()) / 1000) > timeoutValue) {
-                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
                 pendingRequests.remove(request);
+                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
+                SafeTP.sendMessage(request.getTarget(), ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.getRequester().getDisplayName() + ChatColor.GOLD + " timed out.");
             }
         });
 
     }
 
     void addRequest(Player target, Player requester) {
-        addRequest(new Request(target, requester));
+        removeRequests(target, requester);
+        pendingRequests.put(new Request(target, requester), new Date());
     }
 
-    private void addRequest(Request newRequest) {
+    void removeRequests(Player target, Player requester) {
         pendingRequests.forEach((request, date) -> {
-            if (request.isSamePlayers(newRequest)) {
-                pendingRequests.remove(request);
-            }
-        });
-        pendingRequests.put(newRequest, new Date());
-    }
-
-    void removeRequest(Player target, Player requester) {
-        removeRequest(new Request(target, requester));
-    }
-
-    private void removeRequest(Request toDeleteRequest) {
-        pendingRequests.forEach((request, date) -> {
-            if (request.isSamePlayers(toDeleteRequest)) {
+            if (request.isSamePlayers(target, requester)) {
                 pendingRequests.remove(request);
             }
         });
     }
 
-    private boolean containsRequest(Request searchedRequest) {
+    public void removeRequestsByTarget(Player target) {
+        pendingRequests.forEach((request, date) -> {
+            if (request.getTarget().getUniqueId().equals(target.getUniqueId())) {
+                pendingRequests.remove(request);
+            }
+        });
+    }
+
+    public void removeRequestsByRequester(Player requester) {
+        pendingRequests.forEach((request, date) -> {
+            if (request.getRequester().getUniqueId().equals(requester.getUniqueId())) {
+                pendingRequests.remove(request);
+            }
+        });
+    }
+
+    boolean isRequestActive(Player target, Player requester) {
         AtomicBoolean exists = new AtomicBoolean(false);
         pendingRequests.forEach((request, date) -> {
-            if (request.isSamePlayers(searchedRequest)) {
+            if (request.isSamePlayers(target, requester)) {
                 exists.set(true);
             }
         });
         return exists.get();
     }
 
-    private boolean containsRequester(Player requester) {
+    boolean isRequestActiveByTarget(Player target) {
+        AtomicBoolean exists = new AtomicBoolean(false);
+        pendingRequests.forEach((request, date) -> {
+            if (request.getTarget().equals(target)) {
+                exists.set(true);
+            }
+        });
+        return exists.get();
+    }
+
+    boolean isRequestActiveByRequester(Player requester) {
         AtomicBoolean exists = new AtomicBoolean(false);
         pendingRequests.forEach((request, date) -> {
             if (request.getRequester().equals(requester)) {
@@ -71,14 +86,6 @@ class RequestManager {
             }
         });
         return exists.get();
-    }
-
-    boolean isRequestExisting(Player target, Player requester) {
-        return containsRequest(new Request(target, requester));
-    }
-
-    boolean isRequester(Player requester) {
-        return containsRequester(requester);
     }
 
 }
