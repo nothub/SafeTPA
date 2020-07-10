@@ -318,12 +318,25 @@ public final class SafeTP extends JavaPlugin {
 
         saveConfig();
 
+        // rename deprecated config paths
+        renameConfigPathIfPresent("allow-tp-from-spawn", "spawn-tp-deny");
+        renameConfigPathIfPresent("spawn-radius", "spawn-tp-deny-radius");
+
         configMultiRequest = getConfig().getBoolean("allow-multi-target-request");
         configRequestTimeoutSeconds = sanitizeConfigIntValue("request-timeout-seconds");
         configUnvanishDelay = sanitizeConfigIntValue("unvanish-delay-ticks");
         configSpawnTpDeny = getConfig().getBoolean("spawn-tp-deny");
         configSpawnTpDenyRadius = sanitizeConfigIntValue("spawn-tp-deny-radius");
 
+    }
+
+    private void renameConfigPathIfPresent(String oldPath, String newPath) {
+        if (Optional.ofNullable(getConfig().get(oldPath)).isPresent()) {
+            getConfig().set(newPath, getConfig().getBoolean(oldPath));
+            getConfig().set(oldPath, null);
+            saveConfig();
+            getLogger().info("Converted old config path " + "\"" + oldPath + "\"" + " to " + "\"" + newPath + "\"");
+        }
     }
 
 }
