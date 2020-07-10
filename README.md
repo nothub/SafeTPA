@@ -3,7 +3,9 @@
 <a href="https://github.com/blockparole/SafeTP" alt="Download"><img src="https://img.shields.io/github/languages/code-size/blockparole/SafeTP.svg?label=repo%20size&style=popout-square" /></a>
 
 A simple Teleport Plugin for Minecraft that uses [vanish](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-) to mitigate [Coordinate Exploitation](https://2b2t.miraheze.org/wiki/Coordinate_Exploits#Debug_Exploit/).  
-`/tpa NAME` `/tpy NAME` `/tpn NAME`
+
+Usage:  
+`/tpa <NAME>` `/tpy <NAME>` `/tpn <NAME>`
 
 Default Config:
 ```
