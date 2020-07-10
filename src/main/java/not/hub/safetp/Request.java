@@ -20,8 +20,8 @@ class Request {
         return requester;
     }
 
-    boolean isSamePlayers(Request newRequest) {
-        return this.target.equals(newRequest.target) && this.requester.equals(newRequest.requester);
+    boolean isSamePlayers(Player target, Player requester) {
+        return this.target.equals(target) && this.requester.equals(requester);
     }
 
 }
