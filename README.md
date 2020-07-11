@@ -6,7 +6,7 @@
 A simple Teleport Plugin for Minecraft that uses [vanish](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-) to mitigate [Coordinate Exploitation](https://2b2t.miraheze.org/wiki/Coordinate_Exploits#Debug_Exploit/).  
 
 Usage:
-`/tpa <NAME>` `/tpy <NAME>` `/tpn <NAME>`
+`/tpa <NAME>` `/tpy <NAME>` `/tpn <NAME>` `/tpt`
 
 Default Config:
 ```
