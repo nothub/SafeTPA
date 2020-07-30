@@ -39,18 +39,6 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    private int sanitizeConfigIntValue(String path) {
-
-        int value = getConfig().getInt(path);
-        if (value <= 0) {
-            value = (int) getConfig().getDefaults().get(path);
-            getConfig().set(path, value);
-            saveConfig();
-        }
-        return value;
-
-    }
-
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
 
@@ -318,25 +306,30 @@ public final class SafeTP extends JavaPlugin {
 
         saveConfig();
 
-        // rename deprecated config paths
-        renameConfigPathIfPresent("allow-tp-from-spawn", "spawn-tp-deny");
-        renameConfigPathIfPresent("spawn-radius", "spawn-tp-deny-radius");
-
         configMultiRequest = getConfig().getBoolean("allow-multi-target-request");
-        configRequestTimeoutSeconds = sanitizeConfigIntValue("request-timeout-seconds");
-        configUnvanishDelay = sanitizeConfigIntValue("unvanish-delay-ticks");
+        configRequestTimeoutSeconds = getConfig().getInt("request-timeout-seconds");
+        configUnvanishDelay = getConfig().getInt("unvanish-delay-ticks");
         configSpawnTpDeny = getConfig().getBoolean("spawn-tp-deny");
-        configSpawnTpDenyRadius = sanitizeConfigIntValue("spawn-tp-deny-radius");
+        configSpawnTpDenyRadius = getConfig().getInt("spawn-tp-deny-radius");
 
-    }
-
-    private void renameConfigPathIfPresent(String oldPath, String newPath) {
-        if (Optional.ofNullable(getConfig().get(oldPath)).isPresent()) {
-            getConfig().set(newPath, getConfig().getBoolean(oldPath));
-            getConfig().set(oldPath, null);
+        if (configRequestTimeoutSeconds < 10) {
+            configRequestTimeoutSeconds = 10;
+            getConfig().set("request-timeout-seconds", 10);
             saveConfig();
-            getLogger().info("Converted old config path " + "\"" + oldPath + "\"" + " to " + "\"" + newPath + "\"");
         }
+
+        if (configUnvanishDelay < 1) {
+            configUnvanishDelay = 1;
+            getConfig().set("unvanish-delay-ticks", 1);
+            saveConfig();
+        }
+
+        if (configSpawnTpDenyRadius < 16) {
+            configSpawnTpDenyRadius = 16;
+            getConfig().set("spawn-tp-deny-radius", 16);
+            saveConfig();
+        }
+
     }
 
 }
