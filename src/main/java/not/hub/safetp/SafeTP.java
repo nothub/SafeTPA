@@ -114,7 +114,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (!configSpawnTpDeny && isAtSpawn(tpRequester)) {
+        if (configSpawnTpDeny && isAtSpawn(tpRequester)) {
             getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
             return;
