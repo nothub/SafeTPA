@@ -14,7 +14,7 @@ allow-multi-target-request: true
 request-timeout-seconds: 60
 unvanish-delay-ticks: 20
 spawn-tp-deny: true
-spawn-tp-deny-radius: false
+spawn-tp-deny-radius: 1500
 ```
 
 This Project uses [PaperLib](https://github.com/PaperMC/PaperLib) and was tested on [Paper](https://papermc.io/) [1.12.2](https://papermc.io/api/v1/paper/1.12.2/1618).
