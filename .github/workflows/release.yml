@@ -36,19 +36,16 @@ jobs:
       - name: prepare depdendency cache
         uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
-          key: '${{ runner.os }}-gradle-${{ hashFiles(''**/*.gradle'') }}'
-          restore-keys: '${{ runner.os }}-gradle'
+          path: ~/.m2
+          key: '${{ runner.os }}-m2-${{ hashFiles(''**/pom.xml'') }}'
+          restore-keys: '${{ runner.os }}-m2'
 
-      - name: prepare gradlew fileperms
-        run: chmod +x gradlew
-
-      - name: run gradle build
-        run: ./gradlew build
+      - name: run maven package
+        run: mvn -B package --file pom.xml
 
       - name: upload release asset
         uses: csexton/release-asset-action@v2
         with:
-          pattern: "build/libs/*.jar"
+          pattern: "target/*.jar"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-url: ${{ steps.create_release.outputs.upload_url }}
