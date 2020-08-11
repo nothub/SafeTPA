@@ -24,7 +24,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: automated release at commit: ${{ env.SHA }}
+          body: automated release at commit ${{ env.SHA }}
           draft: false
           prerelease: false
 
@@ -36,16 +36,19 @@ jobs:
       - name: prepare depdendency cache
         uses: actions/cache@v2
         with:
-          path: ~/.m2
-          key: '${{ runner.os }}-m2-${{ hashFiles(''**/pom.xml'') }}'
-          restore-keys: '${{ runner.os }}-m2'
+          path: ~/.gradle/caches
+          key: '${{ runner.os }}-gradle-${{ hashFiles(''**/*.gradle'') }}'
+          restore-keys: '${{ runner.os }}-gradle'
 
-      - name: run maven package
-        run: mvn -B package --file pom.xml
+      - name: prepare gradlew fileperms
+        run: chmod +x gradlew
+
+      - name: run gradle build
+        run: ./gradlew build
 
       - name: upload release asset
         uses: csexton/release-asset-action@v2
         with:
-          pattern: "target/*.jar"
+          pattern: "build/libs/*.jar"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-url: ${{ steps.create_release.outputs.upload_url }}
