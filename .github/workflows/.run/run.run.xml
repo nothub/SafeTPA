@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="run" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/server/paper.jar" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="install-plugin.sh" run_configuration_type="ShConfigurationType" />
+    </method>
+  </configuration>
+</component>
