@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,6 +73,11 @@ public final class SafeTP extends JavaPlugin {
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
             sendMessage(sender, ChatColor.GOLD + "You cant run this command on yourself!");
+            return false;
+        }
+
+        if (Optional.ofNullable(sender.getVehicle()).isPresent()) {
+            sendMessage(sender, ChatColor.GOLD + "You cant run this command while mounted!");
             return false;
         }
 
@@ -186,13 +190,6 @@ public final class SafeTP extends JavaPlugin {
         }
 
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
-
-        // dismount
-        Optional<Entity> vehicle = Optional.ofNullable(tpRequester.getVehicle());
-        if (vehicle.isPresent()) {
-            getLogger().info("Dismounting " + tpRequester.getDisplayName() + " from " + vehicle.get().getName() + " before teleporting");
-            vehicle.get().eject();
-        }
 
         // vanish requester
         vanish(tpRequester);
