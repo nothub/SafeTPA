@@ -10,8 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public final class SafeTP extends JavaPlugin {
 
@@ -39,7 +38,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
 
         Player sender = null;
 
@@ -73,11 +72,6 @@ public final class SafeTP extends JavaPlugin {
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
             sendMessage(sender, ChatColor.GOLD + "You cant run this command on yourself!");
-            return false;
-        }
-
-        if (Optional.ofNullable(sender.getVehicle()).isPresent()) {
-            sendMessage(sender, ChatColor.GOLD + "You cant run this command while mounted!");
             return false;
         }
 
@@ -186,6 +180,13 @@ public final class SafeTP extends JavaPlugin {
     private void executeTP(Player tpTarget, Player tpRequester) {
 
         if (tpTarget == null || tpRequester == null) {
+            return;
+        }
+
+        // deny mounted target or requester
+        if (tpTarget.getVehicle() != null || tpRequester.getVehicle() != null) {
+            sendMessage(tpTarget, ChatColor.RED + "Teleport failed!");
+            sendMessage(tpRequester, ChatColor.RED + "Teleport failed!");
             return;
         }
 
