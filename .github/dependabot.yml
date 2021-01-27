@@ -7,9 +7,9 @@ updates:
       time: "12:00"
       timezone: "Europe/Berlin"
     assignees:
-      - "blockparole"
+      - "nothub"
     reviewers:
-      - "blockparole"
+      - "nothub"
     commit-message:
       prefix: "maven"
       include: "scope"
