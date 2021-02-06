@@ -41,6 +41,7 @@ public final class SafeTP extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
+
         if (!(commandSender instanceof Player))
             return true;
 
