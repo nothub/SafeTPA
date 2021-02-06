@@ -276,14 +276,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     private boolean isTooFar(Player requester, Player requested) {
-
-        Location loc1 = requester.getLocation();
-        Location loc2 = requested.getLocation();
-
-        double distance = loc1.distance(loc2);
-
-        return distance >= configDistanceLimitRadius;
-
+        return requester.getLocation().distance(requested.getLocation()) >= configDistanceLimitRadius;
     }
 
     private String sanitizeUsername(String name) {
