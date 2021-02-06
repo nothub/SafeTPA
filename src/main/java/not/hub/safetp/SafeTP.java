@@ -306,7 +306,7 @@ public final class SafeTP extends JavaPlugin {
         getConfig().addDefault("unvanish-delay-ticks", 20);
         getConfig().addDefault("spawn-tp-deny", true);
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
-        getConfig().addDefault("distance-limit", true);
+        getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
 
         getConfig().options().copyDefaults(true);
