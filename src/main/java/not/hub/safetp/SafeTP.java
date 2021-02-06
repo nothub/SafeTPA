@@ -21,6 +21,8 @@ public final class SafeTP extends JavaPlugin {
     private int configUnvanishDelay;
     private boolean configSpawnTpDeny;
     private int configSpawnTpDenyRadius;
+    private boolean configDistanceLimit;
+    private int configDistanceLimitRadius;
 
     static void sendMessage(Player player, String message) {
         player.sendMessage(message);
@@ -39,16 +41,10 @@ public final class SafeTP extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
+        if (!(commandSender instanceof Player))
+            return true;
 
-        Player sender = null;
-
-        if (commandSender instanceof Player) {
-            sender = (Player) commandSender;
-        }
-
-        if (sender == null) {
-            return false;
-        }
+        Player sender = (Player) commandSender;
 
         // 0 arg commands
 
@@ -115,6 +111,12 @@ public final class SafeTP extends JavaPlugin {
         if (configSpawnTpDeny && isAtSpawn(tpRequester)) {
             getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
+            return;
+        }
+
+        if (configDistanceLimit && isTooFar(tpRequester, tpTarget)) {
+            getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
+            sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from this person!");
             return;
         }
 
@@ -272,6 +274,17 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
+    private boolean isTooFar(Player requester, Player requested) {
+
+        Location loc1 = requester.getLocation();
+        Location loc2 = requested.getLocation();
+
+        double distance = loc1.distance(loc2);
+
+        return distance >= configDistanceLimitRadius;
+
+    }
+
     private String sanitizeUsername(String name) {
 
         name = name.replaceAll("[^a-zA-Z0-9_]", "");
@@ -299,6 +312,8 @@ public final class SafeTP extends JavaPlugin {
         getConfig().addDefault("unvanish-delay-ticks", 20);
         getConfig().addDefault("spawn-tp-deny", true);
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
+        getConfig().addDefault("distance-limit", true);
+        getConfig().addDefault("distance-limit-radius", 10000);
 
         getConfig().options().copyDefaults(true);
 
@@ -309,6 +324,8 @@ public final class SafeTP extends JavaPlugin {
         configUnvanishDelay = getConfig().getInt("unvanish-delay-ticks");
         configSpawnTpDeny = getConfig().getBoolean("spawn-tp-deny");
         configSpawnTpDenyRadius = getConfig().getInt("spawn-tp-deny-radius");
+        configDistanceLimit = getConfig().getBoolean("distance-limit");
+        configSpawnTpDenyRadius = getConfig().getInt("distance-limit-radius");
 
         if (configRequestTimeoutSeconds < 10) {
             configRequestTimeoutSeconds = 10;
@@ -325,6 +342,12 @@ public final class SafeTP extends JavaPlugin {
         if (configSpawnTpDenyRadius < 16) {
             configSpawnTpDenyRadius = 16;
             getConfig().set("spawn-tp-deny-radius", 16);
+            saveConfig();
+        }
+
+        if (configDistanceLimitRadius < 16) {
+            configDistanceLimitRadius = 16;
+            getConfig().set("distance-limit-radius", 16);
             saveConfig();
         }
 
