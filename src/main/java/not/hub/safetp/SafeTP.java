@@ -319,7 +319,7 @@ public final class SafeTP extends JavaPlugin {
         configSpawnTpDeny = getConfig().getBoolean("spawn-tp-deny");
         configSpawnTpDenyRadius = getConfig().getInt("spawn-tp-deny-radius");
         configDistanceLimit = getConfig().getBoolean("distance-limit");
-        configSpawnTpDenyRadius = getConfig().getInt("distance-limit-radius");
+        configDistanceLimitRadius = getConfig().getInt("distance-limit-radius");
 
         if (configRequestTimeoutSeconds < 10) {
             configRequestTimeoutSeconds = 10;
