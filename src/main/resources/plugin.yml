@@ -1,7 +1,7 @@
 name: SafeTP
 version: @version@
 description: tpa
-authors: [nothub]
+authors: [nothub, AlexProgrammerDE]
 main: not.hub.safetp.SafeTP
 
 commands:
