@@ -117,7 +117,7 @@ public final class SafeTP extends JavaPlugin {
 
         if (configDistanceLimit && isTooFar(tpRequester, tpTarget)) {
             getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
-            sendMessage(tpRequester, ChatColor.GOLD + "You are too far away " + tpTarget.getName() + " to teleport!");
+            sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
             return;
         }
 
