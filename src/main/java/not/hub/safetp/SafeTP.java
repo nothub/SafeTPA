@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public final class SafeTP extends JavaPlugin {
@@ -275,8 +276,17 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    private boolean isTooFar(Player requester, Player requested) {
-        return requester.getLocation().distance(requested.getLocation()) >= configDistanceLimitRadius;
+    private boolean isTooFar(Player requester, Player target) {
+        return new Vector(
+                Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
+                0,
+                Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
+        ).distance(
+                new Vector(
+                        Math.abs(requester.getLocation().getX()) * (target.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
+                        0,
+                        Math.abs(requester.getLocation().getZ()) * (target.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1))
+        ) >= configDistanceLimitRadius;
     }
 
     private String sanitizeUsername(String name) {
