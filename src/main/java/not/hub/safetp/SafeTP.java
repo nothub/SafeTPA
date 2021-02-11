@@ -4,7 +4,6 @@ import io.papermc.lib.PaperLib;
 import not.hub.safetp.tasks.ClearOldRequestsRunnable;
 import not.hub.safetp.tasks.UnvanishRunnable;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -116,7 +115,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (configDistanceLimit && isTooFar(tpRequester, tpTarget)) {
+        if (configDistanceLimit && isOverDistanceLimit(tpRequester, tpTarget)) {
             getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
             return;
@@ -261,32 +260,18 @@ public final class SafeTP extends JavaPlugin {
     }
 
     private boolean isAtSpawn(Player requester) {
-
-        Location loc = requester.getLocation();
-        World.Environment dim = requester.getWorld().getEnvironment();
-
         // end spawn is not spawn
-        if (dim.equals(World.Environment.THE_END)) {
+        if (requester.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
             return false;
         }
-
-        boolean isNether = dim.equals(World.Environment.NETHER);
-
-        return Math.abs(loc.getX()) * (isNether ? 8 : 1) <= configSpawnTpDenyRadius && Math.abs(loc.getZ()) * (isNether ? 8 : 1) <= configSpawnTpDenyRadius;
-
+        Vector pos = LocationUtils.getOverworldXzVector(requester);
+        return pos.getX() <= configSpawnTpDenyRadius && pos.getZ() <= configSpawnTpDenyRadius;
     }
 
-    private boolean isTooFar(Player requester, Player target) {
-        return new Vector(
-                Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
-                0,
-                Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
-        ).distance(
-                new Vector(
-                        Math.abs(requester.getLocation().getX()) * (target.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
-                        0,
-                        Math.abs(requester.getLocation().getZ()) * (target.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1))
-        ) >= configDistanceLimitRadius;
+    private boolean isOverDistanceLimit(Player requester, Player target) {
+        return LocationUtils.getOverworldXzVector(requester)
+                .distance(LocationUtils.getOverworldXzVector(target))
+                > configDistanceLimitRadius;
     }
 
     private String sanitizeUsername(String name) {
