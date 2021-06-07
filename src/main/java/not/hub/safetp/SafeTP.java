@@ -268,6 +268,7 @@ public final class SafeTP extends JavaPlugin {
 
     private String sanitizeUsername(String name) {
         name = name.replaceAll("[^a-zA-Z0-9_ ]", "");
+        // https://namemc.com/profile/F.1 ...
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
