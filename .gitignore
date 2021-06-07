@@ -1,14 +1,22 @@
-# Java
-*.class
-*.jar
-hs_err_pid*
+# ignore all files
+*
+# but include directories
+!*/
 
-# Maven
-target/
+# git
+!/**/.gitkeep
+!/.gitignore
+!/.gitmodules
 
-# IntelliJ
-.idea
-*.iml
+# java
+!/**/src/**
 
-# Test Env
-server/
+# maven
+!/**/pom.xml
+
+# misc
+!/.github/**
+!/.run/**
+!/*.md
+!/.editorconfig
+!/LICENSE
