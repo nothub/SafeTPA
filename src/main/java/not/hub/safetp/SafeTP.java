@@ -198,7 +198,6 @@ public final class SafeTP extends JavaPlugin {
 
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        // vanish requester
         vanish(tpRequester);
 
         // execute teleport
