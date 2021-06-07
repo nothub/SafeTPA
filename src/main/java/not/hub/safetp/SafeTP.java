@@ -10,22 +10,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 public final class SafeTP extends JavaPlugin {
 
+    public static final String BLOCKED_PREFIX = "requests-blocked-";
     private final RequestManager requestManager = new RequestManager();
-
-    private boolean configMultiRequest;
-    private int configRequestTimeoutSeconds;
-    private int configUnvanishDelay;
-    private boolean configSpawnTpDeny;
-    private int configSpawnTpDenyRadius;
-    private boolean configDistanceLimit;
-    private int configDistanceLimitRadius;
 
     static void sendMessage(Player player, String message) {
         player.sendMessage(message);
+    }
+
+    private static String sanitizeUsername(String name) {
+        name = name.replaceAll("[^a-zA-Z0-9_ ]", "");
+        // https://namemc.com/profile/F.1 ...
+        if (name.length() < 1 || name.length() > 16) {
+            return null;
+        }
+        return name;
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
 
         if (!(commandSender instanceof Player))
             return true;
@@ -92,15 +93,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     public void clearOldRequests() {
-        requestManager.clearOldRequests(configRequestTimeoutSeconds);
-    }
-
-    public void unvanish(Player player) {
-        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
-            if (!onlinePlayer.equals(player)) {
-                onlinePlayer.showPlayer(this, player);
-            }
-        }
+        requestManager.clearOldRequests(getConfig().getInt("request-timeout-seconds"));
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
@@ -109,20 +102,21 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (configSpawnTpDeny && isAtSpawn(tpRequester)) {
+        if (getConfig().getBoolean("spawn-tp-deny") && isAtSpawn(tpRequester)) {
             getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
             return;
         }
 
-        if (configDistanceLimit && isOverDistanceLimit(tpRequester, tpTarget)) {
-            getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
-            sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
+        if (isRequestBlock(tpTarget)) {
+            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
             return;
         }
 
-        if (isToggled(tpTarget)) {
-            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
+        if (getConfig().getBoolean("distance-limit") &&
+            getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > getConfig().getInt("distance-limit-radius")) {
+            getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
+            sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
             return;
         }
 
@@ -131,7 +125,7 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (!configMultiRequest && requestManager.isRequestActiveByRequester(tpRequester)) {
+        if (!getConfig().getBoolean("allow-multi-target-request") && requestManager.isRequestActiveByRequester(tpRequester)) {
             sendMessage(tpRequester, ChatColor.GOLD + "Please wait for your existing request to be accepted or denied.");
             return;
         }
@@ -195,7 +189,6 @@ public final class SafeTP extends JavaPlugin {
 
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        // vanish requester
         vanish(tpRequester);
 
         // execute teleport
@@ -210,7 +203,7 @@ public final class SafeTP extends JavaPlugin {
         });
 
         // unvanish requester after n ticks
-        new UnvanishRunnable(this, tpRequester).runTaskLater(this, configUnvanishDelay);
+        new UnvanishRunnable(this, tpRequester).runTaskLater(this, getConfig().getInt("unvanish-delay-ticks"));
 
     }
 
@@ -220,11 +213,11 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        if (isToggled(toggleRequester)) {
-            getConfig().set(generateRequestBlockPath(toggleRequester), null); // if toggle is getting turned off, we delete instead of setting false
+        if (isRequestBlock(toggleRequester)) {
+            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId().toString(), null); // if toggle is getting turned off, we delete instead of setting false
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
         } else {
-            getConfig().set(generateRequestBlockPath(toggleRequester), true);
+            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId().toString(), true);
             requestManager.removeRequestsByTarget(toggleRequester);
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
         }
@@ -233,30 +226,16 @@ public final class SafeTP extends JavaPlugin {
 
     }
 
-    private String generateRequestBlockPath(Player player) {
-        return "requests-blocked-" + player.getUniqueId().toString();
+    private boolean isRequestBlock(Player player) {
+        return getConfig().getBoolean(BLOCKED_PREFIX + player.getUniqueId().toString());
     }
 
-    private boolean isToggled(Player player) {
-        return getConfig().getBoolean(generateRequestBlockPath(player));
-    }
-
-    private boolean isInvalidTarget(String args) {
-
-        // check for empty argument
-        if (args.isEmpty()) {
-            return true;
-        }
-
-        // check for invalid usernames
-        String target = sanitizeUsername(args);
-        if (target == null) {
-            return true;
-        }
-
-        // check if player is online
-        return getServer().getPlayer(target) == null;
-
+    private Vector getOverworldXzVector(Player requester) {
+        return new Vector(
+            Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
+            0,
+            Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
+        );
     }
 
     private boolean isAtSpawn(Player requester) {
@@ -264,26 +243,22 @@ public final class SafeTP extends JavaPlugin {
         if (requester.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
             return false;
         }
-        Vector pos = LocationUtils.getOverworldXzVector(requester);
-        return pos.getX() <= configSpawnTpDenyRadius && pos.getZ() <= configSpawnTpDenyRadius;
+        Vector pos = getOverworldXzVector(requester);
+        return pos.getX() <= getConfig().getInt("spawn-tp-deny-radius") && pos.getZ() <= getConfig().getInt("spawn-tp-deny-radius");
     }
 
-    private boolean isOverDistanceLimit(Player requester, Player target) {
-        return LocationUtils.getOverworldXzVector(requester)
-                .distance(LocationUtils.getOverworldXzVector(target))
-                > configDistanceLimitRadius;
-    }
-
-    private String sanitizeUsername(String name) {
-
-        name = name.replaceAll("[^a-zA-Z0-9_ ]", "");
-
-        if (name.length() < 1 || name.length() > 16) {
-            return null;
+    private boolean isInvalidTarget(String args) {
+        // check for empty argument
+        if (args.isEmpty()) {
+            return true;
         }
-
-        return name;
-
+        // check for invalid usernames
+        String target = sanitizeUsername(args);
+        if (target == null) {
+            return true;
+        }
+        // check if player is online
+        return getServer().getPlayer(target) == null;
     }
 
     private void vanish(Player player) {
@@ -294,8 +269,17 @@ public final class SafeTP extends JavaPlugin {
         }
     }
 
+    public void unvanish(Player player) {
+        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
+            if (!onlinePlayer.equals(player)) {
+                onlinePlayer.showPlayer(this, player);
+            }
+        }
+    }
+
     private void loadConfig() {
 
+        // defaults
         getConfig().addDefault("allow-multi-target-request", true);
         getConfig().addDefault("request-timeout-seconds", 60);
         getConfig().addDefault("unvanish-delay-ticks", 20);
@@ -303,39 +287,23 @@ public final class SafeTP extends JavaPlugin {
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
         getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
-
         getConfig().options().copyDefaults(true);
-
         saveConfig();
 
-        configMultiRequest = getConfig().getBoolean("allow-multi-target-request");
-        configRequestTimeoutSeconds = getConfig().getInt("request-timeout-seconds");
-        configUnvanishDelay = getConfig().getInt("unvanish-delay-ticks");
-        configSpawnTpDeny = getConfig().getBoolean("spawn-tp-deny");
-        configSpawnTpDenyRadius = getConfig().getInt("spawn-tp-deny-radius");
-        configDistanceLimit = getConfig().getBoolean("distance-limit");
-        configDistanceLimitRadius = getConfig().getInt("distance-limit-radius");
-
-        if (configRequestTimeoutSeconds < 10) {
-            configRequestTimeoutSeconds = 10;
+        // validate
+        if (getConfig().getInt("request-timeout-seconds") < 10) {
             getConfig().set("request-timeout-seconds", 10);
             saveConfig();
         }
-
-        if (configUnvanishDelay < 1) {
-            configUnvanishDelay = 1;
+        if (getConfig().getInt("unvanish-delay-ticks") < 1) {
             getConfig().set("unvanish-delay-ticks", 1);
             saveConfig();
         }
-
-        if (configSpawnTpDenyRadius < 16) {
-            configSpawnTpDenyRadius = 16;
+        if (getConfig().getInt("spawn-tp-deny-radius") < 16) {
             getConfig().set("spawn-tp-deny-radius", 16);
             saveConfig();
         }
-
-        if (configDistanceLimitRadius < 16) {
-            configDistanceLimitRadius = 16;
+        if (getConfig().getInt("distance-limit-radius") < 16) {
             getConfig().set("distance-limit-radius", 16);
             saveConfig();
         }
