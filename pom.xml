@@ -65,6 +65,10 @@
             <id>neckbeard</id>
             <url>https://maven.neckbeard.cc/</url>
         </repository>
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
