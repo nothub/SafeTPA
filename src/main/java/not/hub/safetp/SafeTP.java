@@ -29,14 +29,6 @@ public final class SafeTP extends JavaPlugin {
         return name;
     }
 
-    private static Vector getOverworldXzVector(Player requester) {
-        return new Vector(
-                Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
-                0,
-                Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
-        );
-    }
-
     @Override
     public void onEnable() {
 
@@ -122,7 +114,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("distance-limit") &&
-                getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > getConfig().getInt("distance-limit-radius")) {
+            getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > getConfig().getInt("distance-limit-radius")) {
             getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
             return;
@@ -236,6 +228,14 @@ public final class SafeTP extends JavaPlugin {
 
     private boolean isRequestBlock(Player player) {
         return getConfig().getBoolean(BLOCKED_PREFIX + player.getUniqueId().toString());
+    }
+
+    private Vector getOverworldXzVector(Player requester) {
+        return new Vector(
+            Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
+            0,
+            Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
+        );
     }
 
     private boolean isAtSpawn(Player requester) {
