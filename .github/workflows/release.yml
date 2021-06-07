@@ -41,7 +41,7 @@ jobs:
           restore-keys: '${{ runner.os }}-m2'
 
       - name: run maven package
-        run: mvn -B package --file pom.xml
+        run: mvn --batch-mode --show-version --errors package --file pom.xml
 
       - name: upload release asset
         uses: csexton/release-asset-action@v2
