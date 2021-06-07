@@ -117,15 +117,15 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
+        if (isRequestBlock(tpTarget)) {
+            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
+            return;
+        }
+
         if (getConfig().getBoolean("distance-limit") &&
                 getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > getConfig().getInt("distance-limit-radius")) {
             getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + tpTarget.getName() + " to teleport!");
-            return;
-        }
-
-        if (isRequestBlock(tpTarget)) {
-            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
             return;
         }
 
