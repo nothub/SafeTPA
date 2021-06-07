@@ -3,8 +3,7 @@
 [![DL](https://img.shields.io/github/downloads/nothub/SafeTP/total?label=DL&style=popout-square)](https://github.com/nothub/SafeTP/releases/latest)
 [![LoC](https://img.shields.io/tokei/lines/github/nothub/SafeTP?label=LoC&style=popout-square)](https://github.com/nothub/SafeTP)
 
-A simple Teleport Plugin for Minecraft that
-uses [vanish](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-)
+A simple Teleport Plugin for Minecraft that uses [vanish](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer-org.bukkit.plugin.Plugin-org.bukkit.entity.Player-)
 to mitigate [Coordinate Exploitation](https://2b2t.miraheze.org/wiki/Coordinate_Exploits#Debug_Exploit/).
 
 Usage:
