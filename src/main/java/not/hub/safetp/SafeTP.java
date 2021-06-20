@@ -69,7 +69,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
-            sendMessage(sender, ChatColor.GOLD + "You cant run this command on yourself!");
+            sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.getDisplayName() + ChatColor.GOLD + "!");
             return false;
         }
 
