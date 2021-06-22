@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public final class SafeTP extends JavaPlugin {
 
@@ -22,7 +23,6 @@ public final class SafeTP extends JavaPlugin {
 
     private static String sanitizeUsername(String name) {
         name = name.replaceAll("[^a-zA-Z0-9_ ]", "");
-        // https://namemc.com/profile/F.1 ...
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
@@ -41,7 +41,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
 
         if (!(commandSender instanceof Player))
             return true;
@@ -69,7 +69,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
-            sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.getDisplayName() + ChatColor.GOLD + "!");
+            sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.displayName() + ChatColor.GOLD + "!");
             return false;
         }
 
@@ -109,7 +109,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (isRequestBlock(tpTarget)) {
-            sendMessage(tpRequester, tpTarget.getDisplayName() + ChatColor.GOLD + " is currently not accepting any teleport requests!");
+            sendMessage(tpRequester, tpTarget.displayName() + "" + ChatColor.GOLD + " is currently not accepting any teleport requests!");
             return;
         }
 
@@ -121,7 +121,7 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (requestManager.isRequestActive(tpTarget, tpRequester)) {
-            sendMessage(tpRequester, ChatColor.GOLD + "Please wait for " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + " to accept or deny your request.");
+            sendMessage(tpRequester, ChatColor.GOLD + "Please wait for " + ChatColor.RESET + tpTarget.displayName() + ChatColor.GOLD + " to accept or deny your request.");
             return;
         }
 
@@ -130,8 +130,8 @@ public final class SafeTP extends JavaPlugin {
             return;
         }
 
-        sendMessage(tpRequester, ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + tpTarget.getDisplayName());
-        sendMessage(tpTarget, tpRequester.getDisplayName() + ChatColor.GOLD + " wants to teleport to you.");
+        sendMessage(tpRequester, ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + tpTarget.displayName());
+        sendMessage(tpTarget, tpRequester.displayName() + "" + ChatColor.GOLD + " wants to teleport to you.");
         sendMessage(tpTarget, ChatColor.GOLD + "Type " + ChatColor.RESET + "/tpy " + tpRequester.getName() + ChatColor.GOLD + " to accept or " + ChatColor.RESET + "/tpn " + tpRequester.getName() + ChatColor.GOLD + " to deny.");
 
         requestManager.addRequest(tpTarget, tpRequester);
@@ -145,12 +145,12 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
-            sendMessage(tpTarget, ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
+            sendMessage(tpTarget, ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.displayName() + ChatColor.GOLD + "!");
             return;
         }
 
-        sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GREEN + " accepted" + ChatColor.GOLD + "!");
-        sendMessage(tpRequester, ChatColor.GOLD + "Your request was " + ChatColor.GREEN + "accepted" + ChatColor.GOLD + ", teleporting to: " + ChatColor.RESET + tpTarget.getDisplayName());
+        sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.displayName() + ChatColor.GREEN + " accepted" + ChatColor.GOLD + "!");
+        sendMessage(tpRequester, ChatColor.GOLD + "Your request was " + ChatColor.GREEN + "accepted" + ChatColor.GOLD + ", teleporting to: " + ChatColor.RESET + tpTarget.displayName());
 
         executeTP(tpTarget, tpRequester);
         requestManager.removeRequests(tpTarget, tpRequester);
@@ -164,12 +164,12 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
-            sendMessage(tpTarget, ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
+            sendMessage(tpTarget, ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.displayName() + ChatColor.GOLD + "!");
             return;
         }
 
-        sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
-        sendMessage(tpRequester, ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
+        sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.displayName() + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
+        sendMessage(tpRequester, ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.displayName() + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
         requestManager.removeRequests(tpTarget, tpRequester);
 
     }
@@ -194,8 +194,8 @@ public final class SafeTP extends JavaPlugin {
         // execute teleport
         PaperLib.teleportAsync(tpRequester, tpTarget.getLocation()).thenAccept(result -> {
             if (result) {
-                sendMessage(tpTarget, tpRequester.getDisplayName() + ChatColor.GOLD + " teleported to you!");
-                sendMessage(tpRequester, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + "!");
+                sendMessage(tpTarget, tpRequester.displayName() + "" + ChatColor.GOLD + " teleported to you!");
+                sendMessage(tpRequester, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.displayName() + ChatColor.GOLD + "!");
             } else {
                 sendMessage(tpTarget, ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
                 sendMessage(tpRequester, ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
@@ -214,10 +214,10 @@ public final class SafeTP extends JavaPlugin {
         }
 
         if (isRequestBlock(toggleRequester)) {
-            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId().toString(), null); // if toggle is getting turned off, we delete instead of setting false
+            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId(), null); // if toggle is getting turned off, we delete instead of setting false
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
         } else {
-            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId().toString(), true);
+            getConfig().set(BLOCKED_PREFIX + toggleRequester.getUniqueId(), true);
             requestManager.removeRequestsByTarget(toggleRequester);
             sendMessage(toggleRequester, ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
         }
@@ -227,7 +227,7 @@ public final class SafeTP extends JavaPlugin {
     }
 
     private boolean isRequestBlock(Player player) {
-        return getConfig().getBoolean(BLOCKED_PREFIX + player.getUniqueId().toString());
+        return getConfig().getBoolean(BLOCKED_PREFIX + player.getUniqueId());
     }
 
     private Vector getOverworldXzVector(Player requester) {
