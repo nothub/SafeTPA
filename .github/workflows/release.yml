@@ -46,6 +46,6 @@ jobs:
       - name: upload release asset
         uses: csexton/release-asset-action@v2
         with:
-          pattern: "target/*.jar"
+          pattern: "target/SafeTP-*.jar"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-url: ${{ steps.create_release.outputs.upload_url }}
