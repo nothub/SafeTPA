@@ -19,8 +19,8 @@ class RequestManager {
         pendingRequests.forEach((request, requestTime) -> {
             if (((time - requestTime) / 1000) > timeoutValue) {
                 pendingRequests.remove(request);
-                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().displayName() + ChatColor.GOLD + " timed out.");
-                SafeTP.sendMessage(request.getTarget(), ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.getRequester().displayName() + ChatColor.GOLD + " timed out.");
+                SafeTP.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().getName() + ChatColor.GOLD + " timed out.");
+                SafeTP.sendMessage(request.getTarget(), ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.getRequester().getName() + ChatColor.GOLD + " timed out.");
             }
         });
     }
