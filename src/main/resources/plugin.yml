@@ -1,8 +1,9 @@
 name: SafeTP
 version: @version@
-description: tpa
+description: Player self-service Teleport Requests
 authors: [nothub, AlexProgrammerDE]
 main: not.hub.safetp.SafeTP
+api-version: 1.16
 
 commands:
   tpa:
