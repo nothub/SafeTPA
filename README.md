@@ -19,4 +19,4 @@ spawn-tp-deny: true
 spawn-tp-deny-radius: 1500
 ```
 
-This Project uses [PaperLib](https://github.com/PaperMC/PaperLib) and was tested on [Paper](https://papermc.io/) [1.12.2](https://papermc.io/api/v1/paper/1.12.2/1618).
+This Project uses [PaperLib](https://github.com/PaperMC/PaperLib).
