@@ -3,7 +3,7 @@ version: @version@
 description: Player self-service Teleport Requests
 authors: [nothub, AlexProgrammerDE]
 main: not.hub.safetp.SafeTP
-#api-version: 1.12 # if set to 1.12, breaks compatibility with 1.16+
+api-version: 1.13
 
 commands:
   tpa:
