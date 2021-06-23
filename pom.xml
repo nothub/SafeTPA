@@ -6,13 +6,13 @@
 
   <groupId>not.hub</groupId>
   <artifactId>SafeTP</artifactId>
-  <version>3.1.0</version>
+  <version>3.1.1</version>
   <packaging>jar</packaging>
 
   <name>SafeTP</name>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

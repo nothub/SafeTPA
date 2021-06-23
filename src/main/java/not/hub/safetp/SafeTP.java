@@ -289,7 +289,7 @@ public final class SafeTP extends JavaPlugin {
         getConfig().addDefault("spawn-tp-deny", true);
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
         getConfig().addDefault("distance-limit", false);
-        getConfig().addDefault("distance-limit-radius", 10000);
+        getConfig().addDefault("distance-limit-radius", 1000);
         getConfig().options().copyDefaults(true);
         saveConfig();
 
