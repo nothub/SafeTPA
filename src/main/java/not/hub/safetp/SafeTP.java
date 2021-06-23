@@ -3,6 +3,7 @@ package not.hub.safetp;
 import io.papermc.lib.PaperLib;
 import not.hub.safetp.tasks.ClearOldRequestsRunnable;
 import not.hub.safetp.tasks.UnvanishRunnable;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -33,6 +34,8 @@ public final class SafeTP extends JavaPlugin {
     public void onEnable() {
 
         PaperLib.suggestPaper(this);
+
+        new Metrics(this, 11798);
 
         loadConfig();
 
