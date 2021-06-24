@@ -1,5 +1,5 @@
-name: SafeTP
-version: @version@
+name: ${project.artifactId}
+version: ${project.version}
 description: Player self-service Teleport Requests
 authors: [nothub, AlexProgrammerDE]
 main: not.hub.safetp.SafeTP
