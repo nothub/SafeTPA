@@ -16,7 +16,7 @@
 
 # misc
 !/.github/**
-!/convenience/**
+!/convenience
 !/*.md
 !/.editorconfig
 !/LICENSE

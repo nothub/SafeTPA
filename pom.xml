@@ -36,10 +36,6 @@
 
   <repositories>
     <repository>
-      <id>neckbeard</id>
-      <url>https://maven.neckbeard.cc/</url>
-    </repository>
-    <repository>
       <id>papermc</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
@@ -153,41 +149,10 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>com.googlecode.maven-download-plugin</groupId>
-            <artifactId>download-maven-plugin</artifactId>
-            <version>1.3.0</version>
-            <executions>
-              <execution>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>wget</goal>
-                </goals>
-                <configuration>
-                  <url>https://raw.githubusercontent.com/nothub/convenience/master/server-setup.py</url>
-                  <outputFileName>server-setup.py</outputFileName>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.0.0</version>
             <executions>
-              <execution>
-                <id>chmod</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>chmod</executable>
-                  <arguments>
-                    <argument>+x</argument>
-                    <argument>${project.build.directory}/server-setup.py</argument>
-                  </arguments>
-                </configuration>
-              </execution>
               <execution>
                 <id>mc-server-setup</id>
                 <phase>pre-integration-test</phase>
@@ -195,7 +160,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>${project.build.directory}/server-setup.py</executable>
+                  <executable>convenience/server-setup.py</executable>
                   <arguments>
                     <argument>--fork</argument>
                     <argument>paper</argument>
