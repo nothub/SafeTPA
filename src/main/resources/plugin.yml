@@ -1,29 +1,29 @@
 name: ${project.artifactId}
 version: ${project.version}
-description: Player self-service Teleport Requests
-authors: [nothub, AlexProgrammerDE]
-main: not.hub.safetp.SafeTP
+description: Player self-service teleport requests
+authors: [ nothub, AlexProgrammerDE, MaybeEthereas ]
+main: not.hub.safetpa.Plugin
 api-version: 1.13
 
 commands:
   tpa:
     description: Send TP Request (/tpa NAME .. or .. /tpask NAME)
-    aliases: [tpask]
+    aliases: [ tpask ]
     permission: tpa.tpa
     permission-message: Insufficient permissions, you should harass your Admin because of this!
   tpy:
     description: Accept TP Request (/tpy NAME .. or .. /tpaccept NAME)
-    aliases: [tpaccept]
+    aliases: [ tpaccept ]
     permission: tpa.tpy
     permission-message: Insufficient permissions, you should harass your Admin because of this!
   tpn:
     description: Deny TP Request (/tpn NAME .. or .. /tpdeny NAME)
-    aliases: [tpdeny]
+    aliases: [ tpdeny ]
     permission: tpa.tpn
     permission-message: Insufficient permissions, you should harass your Admin because of this!
   tpt:
     description: Toggle TP Requests (/tpt .. or .. /tptoggle)
-    aliases: [tptoggle]
+    aliases: [ tptoggle ]
     permission: tpa.tpt
     permission-message: Insufficient permissions, you should harass your Admin because of this!
 

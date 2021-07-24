@@ -1,13 +1,13 @@
-package not.hub.safetp.tasks;
+package not.hub.safetpa.tasks;
 
-import not.hub.safetp.SafeTP;
+import not.hub.safetpa.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ClearOldRequestsRunnable extends BukkitRunnable {
 
-    private final SafeTP plugin;
+    private final Plugin plugin;
 
-    public ClearOldRequestsRunnable(SafeTP plugin) {
+    public ClearOldRequestsRunnable(Plugin plugin) {
         this.plugin = plugin;
     }
 

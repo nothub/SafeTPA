@@ -5,25 +5,25 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>not.hub</groupId>
-  <artifactId>SafeTP</artifactId>
+  <artifactId>SafeTPA</artifactId>
   <version>3.2.3</version>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
   <description>Minecraft self-service teleport requests</description>
-  <url>https://github.com/nothub/SafeTP</url>
+  <url>https://github.com/nothub/SafeTPA</url>
 
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
     </license>
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/nothub/SafeTP.git</connection>
-    <developerConnection>scm:git:ssh://github.com/nothub/SafeTP.git</developerConnection>
-    <url>https://github.com/nothub/SafeTP</url>
+    <connection>scm:git:git://github.com/nothub/SafeTPA.git</connection>
+    <developerConnection>scm:git:ssh://github.com/nothub/SafeTPA.git</developerConnection>
+    <url>https://github.com/nothub/SafeTPA</url>
   </scm>
 
   <properties>
@@ -99,11 +99,11 @@
           <relocations>
             <relocation>
               <pattern>io.papermc.lib</pattern>
-              <shadedPattern>not.hub.safetp.paperlib</shadedPattern>
+              <shadedPattern>not.hub.safetpa.paperlib</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.bstats</pattern>
-              <shadedPattern>not.hub.safetp.bstats</shadedPattern>
+              <shadedPattern>not.hub.safetpa.bstats</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

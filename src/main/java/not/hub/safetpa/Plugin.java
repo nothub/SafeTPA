@@ -1,8 +1,8 @@
-package not.hub.safetp;
+package not.hub.safetpa;
 
 import io.papermc.lib.PaperLib;
-import not.hub.safetp.tasks.ClearOldRequestsRunnable;
-import not.hub.safetp.tasks.UnvanishRunnable;
+import not.hub.safetpa.tasks.ClearOldRequestsRunnable;
+import not.hub.safetpa.tasks.UnvanishRunnable;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public final class SafeTP extends JavaPlugin {
+public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
     private final RequestManager requestManager = new RequestManager();

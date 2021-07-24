@@ -1,7 +1,7 @@
-# SafeTP
+# SafeTPA
 
-[![DL](https://img.shields.io/github/downloads/nothub/SafeTP/total?label=DL&style=popout-square)](https://github.com/nothub/SafeTP/releases/latest)
-[![LoC](https://img.shields.io/tokei/lines/github/nothub/SafeTP?label=LoC&style=popout-square)](https://github.com/nothub/SafeTP)
+[![DL](https://img.shields.io/github/downloads/nothub/SafeTPA/total?label=DL&style=popout-square)](https://github.com/nothub/SafeTPA/releases/latest)
+[![LoC](https://img.shields.io/tokei/lines/github/nothub/SafeTPA?label=LoC&style=popout-square)](https://github.com/nothub/SafeTPA)
 
 Minecraft self-service Teleport Requests
 
@@ -27,12 +27,13 @@ unvanish-delay-ticks: 20
 spawn-tp-deny: true
 spawn-tp-deny-radius: 1500
 distance-limit: false
-distance-limit-radius: 1000
+distance-limit-radius: 10000
 ```
 
 ---
 
 ##### Tested on
+
 Latest [Paper](https://papermc.io/) release for MC 1.12.x, 1.13.x, 1.14.x, 1.15.x, 1.16.x, 1.17.x
 
 ---
