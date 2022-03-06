@@ -32,13 +32,7 @@ distance-limit-radius: 10000
 
 ---
 
-##### Tested on
-
-Latest [Paper](https://papermc.io/) release for MC 1.12.x, 1.13.x, 1.14.x, 1.15.x, 1.16.x, 1.17.x
-
----
-
 Uses [vanish](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html#hidePlayer(org.bukkit.plugin.Plugin,org.bukkit.entity.Player)) to mitigate [Coordinate Exploitation](https://2b2t.miraheze.org/wiki/Coordinate_Exploits#Debug_Exploit/).
 
 ---
-This Project uses [PaperLib](https://github.com/PaperMC/PaperLib) and [bStats](https://github.com/Bastian/bStats).
+This Project uses [PaperLib](https://github.com/PaperMC/PaperLib) and [bStats](https://bstats.org/plugin/bukkit/SafeTP/11798).
