@@ -1,0 +1,22 @@
+name: "🚓"
+
+on:
+  push
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Java setup
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '8'
+          cache: 'maven'
+
+      - name: Maven package
+        run: mvn --batch-mode --show-version --errors verify --file pom.xml
