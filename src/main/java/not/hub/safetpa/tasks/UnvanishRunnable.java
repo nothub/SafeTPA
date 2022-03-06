@@ -1,9 +1,11 @@
 package not.hub.safetpa.tasks;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import not.hub.safetpa.Plugin;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+@SuppressFBWarnings
 public class UnvanishRunnable extends BukkitRunnable {
 
     private final Plugin plugin;

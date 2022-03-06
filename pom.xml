@@ -60,6 +60,12 @@
       <version>3.0.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>4.5.3</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <pluginRepositories>
