@@ -73,6 +73,36 @@
     <defaultGoal>clean package</defaultGoal>
     <plugins>
       <plugin>
+        <!-- require maven 3+, java 17+, check for common dependency problems -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-rules</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <!-- https://maven.apache.org/enforcer/enforcer-rules/index.html -->
+                <requireMavenVersion>
+                  <version>[3,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[17,)</version>
+                </requireJavaVersion>
+                <banDuplicatePomDependencyVersions/>
+                <requireUpperBoundDeps/>
+                <!-- <dependencyConvergence/> 😩 -->
+              </rules>
+              <fail>true</fail>
+              <failFast>true</failFast>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- static analysis via spotbugs -->
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>4.5.3.0</version>
