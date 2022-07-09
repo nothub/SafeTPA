@@ -1,12 +1,12 @@
 package not.hub.safetpa;
 
-import not.hub.safetpa.util.Pair;
+import not.hub.safetpa.util.DataPair;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public record Request(Pair<UUID, String> target, Pair<UUID, String> requester) {
+public record Request(DataPair target, DataPair requester) {
     boolean isSamePlayers(Player target, Player requester) {
-        return this.target.left().equals(target.getUniqueId()) && this.requester.left().equals(requester.getUniqueId());
+        return this.target.uuid().equals(target.getUniqueId()) && this.requester.uuid().equals(requester.getUniqueId());
     }
 }

@@ -28,7 +28,7 @@ public class MoveListener implements Listener {
 
                     Plugin.sendMessage(event.getPlayer(), ChatColor.RED + "Teleport failed!");
                     plugin.getRequestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
-                        Player target = plugin.getServer().getPlayer(request.target().left());
+                        Player target = plugin.getServer().getPlayer(request.target().uuid());
                         if (target != null) {
                             Plugin.sendMessage(target, ChatColor.GOLD + "Teleport failed!");
                         }
