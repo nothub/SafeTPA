@@ -188,7 +188,7 @@ public final class Plugin extends JavaPlugin {
 
         int tpDelay = getConfig().getInt("tp-delay-seconds");
         if (tpDelay > 0) {
-            tpTarget.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
+            tpTarget.sendMessage(ChatColor.GOLD + "Teleporting " + tpRequester.getDisplayName() + " in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
             tpRequester.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
             int taskId = getServer().getScheduler().scheduleSyncDelayedTask(this, () ->
                 executeTPMove(tpTarget, tpRequester), tpDelay * 20L);

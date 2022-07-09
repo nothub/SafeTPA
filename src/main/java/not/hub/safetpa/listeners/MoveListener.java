@@ -17,8 +17,9 @@ public class MoveListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
         if (event.getFrom().getX() != event.getTo().getX()
+            || event.getFrom().getY() != event.getTo().getY()
             || event.getFrom().getZ() != event.getTo().getZ()
-            || event.getFrom().getY() != event.getTo().getY()) {
+            || event.getFrom().getWorld() != event.getTo().getWorld()) {
             event.getPlayer().getMetadata("safetpa-tpid").forEach(meta -> {
                 int taskId = meta.asInt();
 
