@@ -296,7 +296,7 @@ public final class Plugin extends JavaPlugin {
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
         getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
-        getConfig().addDefault("tp-delay-seconds", -1);
+        getConfig().addDefault("tp-delay-seconds", 0);
         getConfig().options().copyDefaults(true);
         saveConfig();
 
@@ -317,7 +317,9 @@ public final class Plugin extends JavaPlugin {
             getConfig().set("distance-limit-radius", 16);
             saveConfig();
         }
-
+        if (getConfig().getInt("tp-delay-seconds") < 0) {
+            getConfig().set("tp-delay-seconds", 0);
+            saveConfig();
+        }
     }
-
 }
