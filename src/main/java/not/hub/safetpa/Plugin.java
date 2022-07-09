@@ -2,6 +2,7 @@ package not.hub.safetpa;
 
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
+import not.hub.safetpa.listeners.MoveListener;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -38,6 +39,8 @@ public final class Plugin extends JavaPlugin {
         new Metrics(this, 11798);
 
         loadConfig();
+
+        getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
         getServer().getScheduler().runTaskTimer(this, this::clearOldRequests, 20, 20);
     }
