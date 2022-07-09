@@ -1,27 +1,12 @@
 package not.hub.safetpa;
 
+import not.hub.safetpa.util.Pair;
 import org.bukkit.entity.Player;
 
-class Request {
+import java.util.UUID;
 
-    private final Player target;
-    private final Player requester;
-
-    Request(Player target, Player requester) {
-        this.target = target;
-        this.requester = requester;
-    }
-
-    Player getTarget() {
-        return target;
-    }
-
-    Player getRequester() {
-        return requester;
-    }
-
+public record Request(Pair<UUID, String> target, Pair<UUID, String> requester) {
     boolean isSamePlayers(Player target, Player requester) {
-        return this.target.equals(target) && this.requester.equals(requester);
+        return this.target.left().equals(target.getUniqueId()) && this.requester.left().equals(requester.getUniqueId());
     }
-
 }

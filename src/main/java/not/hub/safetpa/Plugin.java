@@ -1,14 +1,14 @@
 package not.hub.safetpa;
 
 import io.papermc.lib.PaperLib;
-import not.hub.safetpa.tasks.ClearOldRequestsRunnable;
-import not.hub.safetpa.tasks.UnvanishRunnable;
+import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -16,14 +16,15 @@ import org.jetbrains.annotations.NotNull;
 public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
+    @Getter
     private final RequestManager requestManager = new RequestManager();
 
-    static void sendMessage(Player player, String message) {
+    public static void sendMessage(Player player, String message) {
         player.sendMessage(message);
     }
 
     private static String sanitizeUsername(String name) {
-        name = name.replaceAll("[^a-zA-Z0-9_ ]", "");
+        name = name.replaceAll("[^a-zA-Z\\d_ ]", "");
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
@@ -32,24 +33,20 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         PaperLib.suggestPaper(this);
 
         new Metrics(this, 11798);
 
         loadConfig();
 
-        new ClearOldRequestsRunnable(this).runTaskTimer(this, 0, 20);
-
+        getServer().getScheduler().runTaskTimer(this, this::clearOldRequests, 20, 20);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
 
-        if (!(commandSender instanceof Player))
+        if (!(commandSender instanceof Player sender))
             return true;
-
-        Player sender = (Player) commandSender;
 
         // 0 arg commands
 
@@ -100,7 +97,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
-
         if (tpTarget == null || tpRequester == null) {
             return;
         }
@@ -161,7 +157,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void denyTP(Player tpTarget, Player tpRequester) {
-
         if (tpTarget == null || tpRequester == null) {
             return;
         }
@@ -174,11 +169,9 @@ public final class Plugin extends JavaPlugin {
         sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
         sendMessage(tpRequester, ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
         requestManager.removeRequests(tpTarget, tpRequester);
-
     }
 
     private void executeTP(Player tpTarget, Player tpRequester) {
-
         if (tpTarget == null || tpRequester == null) {
             return;
         }
@@ -190,6 +183,20 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
+        int tpDelay = getConfig().getInt("tp-delay-seconds");
+        if (tpDelay > 0) {
+            tpTarget.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
+            tpRequester.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
+            int taskId = getServer().getScheduler().scheduleSyncDelayedTask(this, () ->
+                executeTPMove(tpTarget, tpRequester), tpDelay * 20L);
+
+            tpRequester.setMetadata("safetpa-tpid", new FixedMetadataValue(this, taskId));
+        } else {
+            executeTPMove(tpTarget, tpRequester);
+        }
+    }
+
+    private void executeTPMove(Player tpTarget, Player tpRequester) {
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
         vanish(tpRequester);
@@ -203,15 +210,13 @@ public final class Plugin extends JavaPlugin {
                 sendMessage(tpTarget, ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
                 sendMessage(tpRequester, ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
             }
+        }).thenAccept(ignored -> {
+            // Unvanish requester after n ticks
+            getServer().getScheduler().scheduleSyncDelayedTask(this, () -> this.unvanish(tpRequester), getConfig().getInt("unvanish-delay-ticks"));
         });
-
-        // unvanish requester after n ticks
-        new UnvanishRunnable(this, tpRequester).runTaskLater(this, getConfig().getInt("unvanish-delay-ticks"));
-
     }
 
     private void toggleRequestBlock(Player toggleRequester) {
-
         if (toggleRequester == null) {
             return;
         }
@@ -226,7 +231,6 @@ public final class Plugin extends JavaPlugin {
         }
 
         saveConfig();
-
     }
 
     private boolean isRequestBlock(Player player) {
@@ -235,15 +239,15 @@ public final class Plugin extends JavaPlugin {
 
     private Vector getOverworldXzVector(Player requester) {
         return new Vector(
-            Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1),
+            Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1),
             0,
-            Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment().equals(World.Environment.NETHER) ? 8 : 1)
+            Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1)
         );
     }
 
     private boolean isAtSpawn(Player requester) {
         // end spawn is not spawn
-        if (requester.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+        if (requester.getWorld().getEnvironment() == World.Environment.THE_END) {
             return false;
         }
         Vector pos = getOverworldXzVector(requester);
@@ -281,15 +285,15 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void loadConfig() {
-
         // defaults
         getConfig().addDefault("allow-multi-target-request", true);
         getConfig().addDefault("request-timeout-seconds", 60);
-        getConfig().addDefault("unvanish-delay-ticks", 20);
+        getConfig().addDefault("unvanish-delay-ticks", 1);
         getConfig().addDefault("spawn-tp-deny", true);
         getConfig().addDefault("spawn-tp-deny-radius", 1500);
         getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
+        getConfig().addDefault("tp-delay-seconds", -1);
         getConfig().options().copyDefaults(true);
         saveConfig();
 

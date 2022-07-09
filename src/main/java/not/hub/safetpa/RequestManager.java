@@ -1,33 +1,41 @@
 package not.hub.safetpa;
 
+import not.hub.safetpa.util.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-class RequestManager {
-
-    private final ConcurrentHashMap<Request, Long> pendingRequests;
-
-    RequestManager() {
-        this.pendingRequests = new ConcurrentHashMap<>();
-    }
+public class RequestManager {
+    private final Map<Request, Long> pendingRequests = new ConcurrentHashMap<>();
 
     void clearOldRequests(int timeoutValue) {
         long time = System.currentTimeMillis();
         pendingRequests.forEach((request, requestTime) -> {
             if (((time - requestTime) / 1000) > timeoutValue) {
                 pendingRequests.remove(request);
-                Plugin.sendMessage(request.getRequester(), ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.getTarget().getDisplayName() + ChatColor.GOLD + " timed out.");
-                Plugin.sendMessage(request.getTarget(), ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.getRequester().getDisplayName() + ChatColor.GOLD + " timed out.");
+                Player requester = Bukkit.getPlayer(request.requester().left());
+                if (requester != null) {
+                    Plugin.sendMessage(requester, ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.target().right() + ChatColor.GOLD + " timed out.");
+                }
+                Player target = Bukkit.getPlayer(request.target().left());
+                if (target != null) {
+                    Plugin.sendMessage(target, ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.requester().right() + ChatColor.GOLD + " timed out.");
+                }
             }
         });
     }
 
     void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
-        pendingRequests.put(new Request(target, requester), System.currentTimeMillis());
+        pendingRequests.put(new Request(
+            new Pair<>(target.getUniqueId(), target.getDisplayName()),
+            new Pair<>(requester.getUniqueId(), requester.getDisplayName())),
+            System.currentTimeMillis());
     }
 
     void removeRequests(Player target, Player requester) {
@@ -40,7 +48,7 @@ class RequestManager {
 
     public void removeRequestsByTarget(Player target) {
         pendingRequests.forEach((request, date) -> {
-            if (request.getTarget().getUniqueId().equals(target.getUniqueId())) {
+            if (request.target().left().equals(target.getUniqueId())) {
                 pendingRequests.remove(request);
             }
         });
@@ -48,7 +56,7 @@ class RequestManager {
 
     public void removeRequestsByRequester(Player requester) {
         pendingRequests.forEach((request, date) -> {
-            if (request.getRequester().getUniqueId().equals(requester.getUniqueId())) {
+            if (request.requester().left().equals(requester.getUniqueId())) {
                 pendingRequests.remove(request);
             }
         });
@@ -65,23 +73,32 @@ class RequestManager {
     }
 
     boolean isRequestActiveByTarget(Player target) {
-        AtomicBoolean exists = new AtomicBoolean(false);
-        pendingRequests.forEach((request, date) -> {
-            if (request.getTarget().equals(target)) {
-                exists.set(true);
+        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
+            Request request = entry.getKey();
+            if (request.target().left().equals(target.getUniqueId())) {
+                return true;
             }
-        });
-        return exists.get();
+        }
+        return false;
     }
 
     boolean isRequestActiveByRequester(Player requester) {
-        AtomicBoolean exists = new AtomicBoolean(false);
-        pendingRequests.forEach((request, date) -> {
-            if (request.getRequester().equals(requester)) {
-                exists.set(true);
+        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
+            Request request = entry.getKey();
+            if (request.requester().left().equals(requester.getUniqueId())) {
+                return true;
             }
-        });
-        return exists.get();
+        }
+        return false;
     }
 
+    public Optional<Request> getRequestByRequester(Player requester) {
+        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
+            Request request = entry.getKey();
+            if (request.requester().left().equals(requester.getUniqueId())) {
+                return Optional.of(request);
+            }
+        }
+        return Optional.empty();
+    }
 }
