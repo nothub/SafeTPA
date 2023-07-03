@@ -14,16 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
 
-    private static final Map<Player, Collection<Player>> IGNORES = new HashMap<>(1);
+    private static final Map<UUID, Set<UUID>> IGNORES = new ConcurrentHashMap<>(1);
 
     @Getter
     private final RequestManager requestManager = new RequestManager();
@@ -109,19 +107,19 @@ public final class Plugin extends JavaPlugin {
 
     }
 
-    private void ignoreTP(Player ignoring, Player toBeIgnored) {
-        if (!IGNORES.containsKey(ignoring)) {
-            IGNORES.put(ignoring, new ArrayList<>(1));
+    private void ignoreTP(Player sender, Player target) {
+        if (!IGNORES.containsKey(sender.getUniqueId())) {
+            IGNORES.put(sender.getUniqueId(), ConcurrentHashMap.newKeySet(1));
         }
 
-        Collection<Player> ignored = IGNORES.get(ignoring);
+        Set<UUID> ignored = IGNORES.get(sender.getUniqueId());
 
-        if (ignored.contains(toBeIgnored)) {
-            ignored.remove(toBeIgnored);
-            sendMessage(ignoring, "You are no longer ignoring tp requests from " + toBeIgnored.getName());
+        if (ignored.contains(target.getUniqueId())) {
+            ignored.remove(target.getUniqueId());
+            sendMessage(sender, "No longer ignoring tp requests from " + target.getName());
         } else {
-            ignored.add(toBeIgnored);
-            sendMessage(ignoring, "Ignoring tp requests from " + toBeIgnored.getName());
+            ignored.add(target.getUniqueId());
+            sendMessage(sender, "Ignoring tp requests from " + target.getName());
         }
     }
 
