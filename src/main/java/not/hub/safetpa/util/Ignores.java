@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -26,9 +27,10 @@ public class Ignores {
         try {
             var reader = Files.newBufferedReader(path(player));
             return gson.fromJson(reader, type);
-        } catch (IOException e) {
-            // TODO: handle error
-            e.printStackTrace(); //So it at least shows up in the log
+        } catch (FileNotFoundException ex) {
+            return new HashSet<>(1);
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return new HashSet<>(1);
         }
     }
