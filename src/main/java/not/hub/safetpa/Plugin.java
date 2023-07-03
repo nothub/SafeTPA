@@ -116,10 +116,10 @@ public final class Plugin extends JavaPlugin {
 
         if (ignored.contains(toBeIgnored)) {
             ignored.remove(toBeIgnored);
-            sendMessage(ignoring, "Ignoring tp requests from " + toBeIgnored.getName());
+            sendMessage(ignoring, "You are no longer ignoring tp requests from " + toBeIgnored.getName());
         } else {
             ignored.add(toBeIgnored);
-            sendMessage(ignoring, "You are no longer ignoring tp requests from " + toBeIgnored.getName());
+            sendMessage(ignoring, "Ignoring tp requests from " + toBeIgnored.getName());
         }
     }
 
