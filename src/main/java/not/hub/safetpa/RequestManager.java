@@ -1,6 +1,5 @@
 package not.hub.safetpa;
 
-import not.hub.safetpa.util.DataPair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -32,10 +31,7 @@ public class RequestManager {
 
     void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
-        pendingRequests.put(new Request(
-            new DataPair(target.getUniqueId(), target.getDisplayName()),
-            new DataPair(requester.getUniqueId(), requester.getDisplayName())),
-            System.currentTimeMillis());
+        pendingRequests.put(Request.of(target,requester), System.currentTimeMillis());
     }
 
     void removeRequests(Player target, Player requester) {
