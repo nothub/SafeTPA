@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Ignores {
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
-    public static Path dir = null; // TODO: hardcoded path as fallback
+    public static Path dir = Path.of("plugins").resolve("SafeTPA").resolve("ignores");
 
     private static Path path(UUID player) {
         return dir.resolve(player.toString() + ".json");
