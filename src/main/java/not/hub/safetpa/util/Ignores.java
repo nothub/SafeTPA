@@ -42,11 +42,10 @@ public class Ignores {
         path.toFile().getParentFile().mkdirs();
 
         var json = gson.toJson(ignores);
-
         try {
             Files.write(path, json.getBytes());
-        } catch (IOException e) {
-            // TODO: handle error
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
