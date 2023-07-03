@@ -10,12 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RequestManager {
+
     private final Map<Request, Long> pendingRequests = new ConcurrentHashMap<>();
 
     void clearOldRequests(int timeoutValue) {
         long time = System.currentTimeMillis();
         pendingRequests.forEach((request, requestTime) -> {
-            if (((time - requestTime) / 1000) > timeoutValue) {
+            if (((time - requestTime) / 1000L) > timeoutValue) {
                 pendingRequests.remove(request);
                 Player requester = Bukkit.getPlayer(request.requester().uuid());
                 if (requester != null) {
@@ -31,46 +32,45 @@ public class RequestManager {
 
     void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
-        pendingRequests.put(Request.of(target,requester), System.currentTimeMillis());
+        pendingRequests.put(Request.of(target, requester), System.currentTimeMillis());
     }
 
     void removeRequests(Player target, Player requester) {
-        pendingRequests.forEach((request, date) -> {
+        for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
                 pendingRequests.remove(request);
             }
-        });
+        }
     }
 
     public void removeRequestsByTarget(Player target) {
-        pendingRequests.forEach((request, date) -> {
+        for (Request request : pendingRequests.keySet()) {
             if (request.target().uuid().equals(target.getUniqueId())) {
                 pendingRequests.remove(request);
             }
-        });
+        }
     }
 
     public void removeRequestsByRequester(Player requester) {
-        pendingRequests.forEach((request, date) -> {
+        for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 pendingRequests.remove(request);
             }
-        });
+        }
     }
 
     boolean isRequestActive(Player target, Player requester) {
-        AtomicBoolean exists = new AtomicBoolean(false);
-        pendingRequests.forEach((request, date) -> {
+        for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
-                exists.set(true);
+                return true;
             }
-        });
-        return exists.get();
+        }
+
+        return false;
     }
 
     boolean isRequestActiveByTarget(Player target) {
-        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
-            Request request = entry.getKey();
+        for (Request request : pendingRequests.keySet()) {
             if (request.target().uuid().equals(target.getUniqueId())) {
                 return true;
             }
@@ -79,8 +79,7 @@ public class RequestManager {
     }
 
     boolean isRequestActiveByRequester(Player requester) {
-        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
-            Request request = entry.getKey();
+        for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 return true;
             }
@@ -89,12 +88,12 @@ public class RequestManager {
     }
 
     public Optional<Request> getRequestByRequester(Player requester) {
-        for (Map.Entry<Request, Long> entry : pendingRequests.entrySet()) {
-            Request request = entry.getKey();
+        for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 return Optional.of(request);
             }
         }
         return Optional.empty();
     }
+
 }
