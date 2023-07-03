@@ -3,6 +3,7 @@ package not.hub.safetpa;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import not.hub.safetpa.listeners.MoveListener;
+import not.hub.safetpa.util.Ignores;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -14,14 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
-
-    private static final Map<UUID, Set<UUID>> IGNORES = new ConcurrentHashMap<>(1);
 
     @Getter
     private final RequestManager requestManager = new RequestManager();
@@ -45,6 +41,8 @@ public final class Plugin extends JavaPlugin {
         new Metrics(this, 11798);
 
         loadConfig();
+
+        Ignores.setDir(getDataFolder().toPath().resolve("ignores"));
 
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
@@ -108,17 +106,12 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void ignoreTP(Player sender, Player target) {
-        if (!IGNORES.containsKey(sender.getUniqueId())) {
-            IGNORES.put(sender.getUniqueId(), ConcurrentHashMap.newKeySet(1));
-        }
-
-        Set<UUID> ignored = IGNORES.get(sender.getUniqueId());
-
-        if (ignored.contains(target.getUniqueId())) {
-            ignored.remove(target.getUniqueId());
+        boolean state = Ignores.isIgnored(sender.getUniqueId(), target.getUniqueId());
+        if (state) {
+            Ignores.setIgnored(sender.getUniqueId(), target.getUniqueId(), false);
             sendMessage(sender, "No longer ignoring tp requests from " + target.getName());
         } else {
-            ignored.add(target.getUniqueId());
+            Ignores.setIgnored(sender.getUniqueId(), target.getUniqueId(), true);
             sendMessage(sender, "Ignoring tp requests from " + target.getName());
         }
     }
@@ -132,7 +125,7 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
-        if (IGNORES.containsKey(tpTarget) && IGNORES.get(tpTarget).contains(tpRequester)) {
+        if (Ignores.isIgnored(tpTarget.getUniqueId(), tpRequester.getUniqueId())) {
             sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
 
