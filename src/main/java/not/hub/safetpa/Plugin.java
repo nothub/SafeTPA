@@ -15,6 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+
 public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
@@ -42,7 +45,7 @@ public final class Plugin extends JavaPlugin {
 
         loadConfig();
 
-        Ignores.dir = getDataFolder().toPath().resolve("ignores");
+        Ignores.dir = Path.of(getConfig().getString("ignores-path"));
 
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
@@ -318,29 +321,49 @@ public final class Plugin extends JavaPlugin {
         getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
         getConfig().addDefault("tp-delay-seconds", 0);
+        getConfig().addDefault("ignores-path", "");
         getConfig().options().copyDefaults(true);
         saveConfig();
 
         // validate
+
         if (getConfig().getInt("request-timeout-seconds") < 10) {
             getConfig().set("request-timeout-seconds", 10);
             saveConfig();
         }
+
         if (getConfig().getInt("unvanish-delay-ticks") < 1) {
             getConfig().set("unvanish-delay-ticks", 1);
             saveConfig();
         }
+
         if (getConfig().getInt("spawn-tp-deny-radius") < 16) {
             getConfig().set("spawn-tp-deny-radius", 16);
             saveConfig();
         }
+
         if (getConfig().getInt("distance-limit-radius") < 16) {
             getConfig().set("distance-limit-radius", 16);
             saveConfig();
         }
+
         if (getConfig().getInt("tp-delay-seconds") < 0) {
             getConfig().set("tp-delay-seconds", 0);
             saveConfig();
         }
+
+        if (getConfig().getString("ignores-path") == null || getConfig().getString("ignores-path").isBlank()) {
+            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
+            saveConfig();
+        }
+        try {
+            Path.of(getConfig().getString("ignores-path"));
+        } catch (InvalidPathException ex) {
+            getLogger().warning("Invalid ignores-path config: " + ex.getMessage());
+            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
+            saveConfig();
+        }
+        getLogger().info("Storing ignore lookup files to: " + Path.of(getConfig().getString("ignores-path")).toAbsolutePath());
+
     }
 }
