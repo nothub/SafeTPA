@@ -75,29 +75,35 @@ public final class Plugin extends JavaPlugin {
             sendMessage(sender, ChatColor.GOLD + "Player not found.");
             return false;
         }
+        Player target = getServer().getPlayer(args[0]);
+        if (target == null) {
+            sendMessage(sender, ChatColor.GOLD + "Player not found.");
+            return false;
+        }
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
+            // Target is sender, we just do nothing.
             sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return false;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpa")) {
-            askTP(getServer().getPlayer(args[0]), sender);
+            askTP(target, sender);
             return true;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpy")) {
-            acceptTP(sender, getServer().getPlayer(args[0]));
+            acceptTP(sender, target);
             return true;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpn")) {
-            denyTP(sender, getServer().getPlayer(args[0]));
+            denyTP(sender, target);
             return true;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpi")) {
-            ignoreTP(sender, getServer().getPlayer(args[0]));
+            ignoreTP(sender, target);
             return true;
         }
 
@@ -124,10 +130,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
-        if (tpTarget == null || tpRequester == null) {
-            return;
-        }
-
         if (Ignores.get(tpTarget.getUniqueId(), tpRequester.getUniqueId())) {
             sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
@@ -169,11 +171,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void acceptTP(Player tpTarget, Player tpRequester) {
-
-        if (tpTarget == null || tpRequester == null) {
-            return;
-        }
-
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return;
@@ -188,10 +185,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void denyTP(Player tpTarget, Player tpRequester) {
-        if (tpTarget == null || tpRequester == null) {
-            return;
-        }
-
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return;
