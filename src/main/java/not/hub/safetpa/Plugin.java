@@ -98,7 +98,7 @@ public final class Plugin extends JavaPlugin {
             return true;
         }
 
-        if (command.getLabel().equalsIgnoreCase("ignoretp")) {
+        if (command.getLabel().equalsIgnoreCase("tpi")) {
             ignoreTP(sender, getServer().getPlayer(args[0]));
             return true;
         }

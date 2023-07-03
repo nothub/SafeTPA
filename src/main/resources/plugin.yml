@@ -26,10 +26,10 @@ commands:
     aliases: [ tptoggle ]
     permission: tpa.tpt
     permission-message: Insufficient permissions, you should harass your Admin because of this!
-  ignoretp:
-    description: Ignore TP requests of a specific player (/ignoretp NAME)
-    aliases: [ ignoretpa ]
-    permission: tpa.itp
+  tpi:
+    description: Ignore TP requests (/tpi NAME .. or .. /tpignore NAME)
+    aliases: [ tpignore ]
+    permission: tpa.tpi
     permission-message: Insufficient permissions, you should harass your Admin because of this!
 
 permissions:
