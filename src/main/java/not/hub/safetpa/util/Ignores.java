@@ -16,11 +16,7 @@ import java.util.UUID;
 public class Ignores {
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
-    private static Path dir = null;
-
-    public static void setDir(Path path) {
-        dir = path;
-    }
+    public static Path dir = null; // TODO: hardcoded path as fallback
 
     private static Path path(UUID player) {
         return dir.resolve(player.toString() + ".json");
@@ -51,17 +47,22 @@ public class Ignores {
         }
     }
 
-    public static boolean isIgnored(UUID player, UUID target) {
+    public static boolean get(UUID player, UUID target) {
         return load(player).contains(target);
     }
 
-    public static void setIgnored(UUID player, UUID target, boolean ignore) {
+    /**
+     * @return true: success, false: maximum ignores reached
+     */
+    public static boolean set(UUID player, UUID target, boolean ignore) {
         Set<UUID> set = load(player);
         if (ignore) {
+            if (set.size() >= 1024) return false;
             set.add(target);
         } else {
             set.remove(target);
         }
         save(player, set);
+        return true;
     }
 }

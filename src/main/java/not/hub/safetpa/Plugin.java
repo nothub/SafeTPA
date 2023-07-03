@@ -42,7 +42,7 @@ public final class Plugin extends JavaPlugin {
 
         loadConfig();
 
-        Ignores.setDir(getDataFolder().toPath().resolve("ignores"));
+        Ignores.dir = getDataFolder().toPath().resolve("ignores");
 
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
@@ -106,13 +106,16 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void ignoreTP(Player sender, Player target) {
-        boolean state = Ignores.isIgnored(sender.getUniqueId(), target.getUniqueId());
-        if (state) {
-            Ignores.setIgnored(sender.getUniqueId(), target.getUniqueId(), false);
+        if (Ignores.get(sender.getUniqueId(), target.getUniqueId())) {
+            Ignores.set(sender.getUniqueId(), target.getUniqueId(), false);
             sendMessage(sender, "No longer ignoring tp requests from " + target.getName());
         } else {
-            Ignores.setIgnored(sender.getUniqueId(), target.getUniqueId(), true);
-            sendMessage(sender, "Ignoring tp requests from " + target.getName());
+            boolean success = Ignores.set(sender.getUniqueId(), target.getUniqueId(), true);
+            if (success) {
+                sendMessage(sender, "Ignoring tp requests from " + target.getName());
+            } else {
+                sendMessage(sender, ChatColor.RED + "Maximum reached, can not add more ignores!");
+            }
         }
     }
 
@@ -125,7 +128,7 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
-        if (Ignores.isIgnored(tpTarget.getUniqueId(), tpRequester.getUniqueId())) {
+        if (Ignores.get(tpTarget.getUniqueId(), tpRequester.getUniqueId())) {
             sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
 
