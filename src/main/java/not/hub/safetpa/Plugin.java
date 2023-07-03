@@ -73,6 +73,8 @@ public final class Plugin extends JavaPlugin {
             return false;
         }
 
+        // If this check is passed (target is valid / if case is not executed),
+        // args[0] is guranteed to contain the name of a player that currently is online.
         if (isInvalidTarget(args[0])) {
             sendMessage(sender, ChatColor.GOLD + "Player not found.");
             return false;
