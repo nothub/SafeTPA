@@ -18,9 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
+import java.util.regex.Pattern;
+
 public final class Plugin extends JavaPlugin {
 
-    public static final String BLOCKED_PREFIX = "requests-blocked-";
+    private static final String BLOCKED_PREFIX = "requests-blocked-";
+    private static final Pattern USERNAME_SANITISATION_PATTERN = Pattern.compile("[^a-zA-Z\\d_ ]");
 
     @Getter
     private final RequestManager requestManager = new RequestManager();
@@ -30,7 +33,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     private static String sanitizeUsername(String name) {
-        name = name.replaceAll("[^a-zA-Z\\d_ ]", "");
+        name = USERNAME_SANITISATION_PATTERN.matcher(name).replaceAll("");
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
@@ -111,7 +114,6 @@ public final class Plugin extends JavaPlugin {
         }
 
         return false;
-
     }
 
     private void ignoreTP(Player sender, Player target) {
@@ -267,7 +269,7 @@ public final class Plugin extends JavaPlugin {
     private Vector getOverworldXzVector(Player requester) {
         return new Vector(
             Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1),
-            0,
+            0.0,
             Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1)
         );
     }

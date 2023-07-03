@@ -28,6 +28,7 @@ public class Ignores {
             return gson.fromJson(reader, type);
         } catch (IOException e) {
             // TODO: handle error
+            e.printStackTrace(); //So it at least shows up in the log
             return new HashSet<>(1);
         }
     }
