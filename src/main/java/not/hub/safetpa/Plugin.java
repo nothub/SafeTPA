@@ -14,9 +14,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class Plugin extends JavaPlugin {
 
     public static final String BLOCKED_PREFIX = "requests-blocked-";
+
+    private static final Map<Player, Collection<Player>> IGNORES = new HashMap<>(1);
+
     @Getter
     private final RequestManager requestManager = new RequestManager();
 
@@ -47,7 +55,6 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
-
         if (!(commandSender instanceof Player sender))
             return true;
 
@@ -62,7 +69,7 @@ public final class Plugin extends JavaPlugin {
 
         if (args.length == 0) {
             sendMessage(sender, ChatColor.GOLD + "You need to run this command with an argument, like this:");
-            sendMessage(sender, "/tpa NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpy NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpn NAME");
+            sendMessage(sender, "/tpa NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpy NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpn NAME" + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/ignoretp NAME");
             return false;
         }
 
@@ -91,8 +98,29 @@ public final class Plugin extends JavaPlugin {
             return true;
         }
 
+        if (command.getLabel().equalsIgnoreCase("ignoretp")) {
+            ignoreTP(sender, getServer().getPlayer(args[0]));
+            return true;
+        }
+
         return false;
 
+    }
+
+    private void ignoreTP(Player ignoring, Player toBeIgnored) {
+        if (!IGNORES.containsKey(ignoring)) {
+            IGNORES.put(ignoring, new ArrayList<>(1));
+        }
+
+        Collection<Player> ignored = IGNORES.get(ignoring);
+
+        if (ignored.contains(toBeIgnored)) {
+            ignored.remove(toBeIgnored);
+            sendMessage(ignoring, "Ignoring tp requests from " + toBeIgnored.getName());
+        } else {
+            ignored.add(toBeIgnored);
+            sendMessage(ignoring, "You are no longer ignoring tp requests from " + toBeIgnored.getName());
+        }
     }
 
     public void clearOldRequests() {
@@ -102,6 +130,10 @@ public final class Plugin extends JavaPlugin {
     private void askTP(Player tpTarget, Player tpRequester) {
         if (tpTarget == null || tpRequester == null) {
             return;
+        }
+
+        if (IGNORES.containsKey(tpTarget) && IGNORES.get(tpTarget).contains(tpRequester)) {
+            sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
 
         if (getConfig().getBoolean("spawn-tp-deny") && isAtSpawn(tpRequester)) {
