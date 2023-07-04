@@ -82,7 +82,6 @@ public class Config {
 
 
         initialized = true;
-        plugin.getLogger().info("Config loaded: " + ReflectionToStringBuilder.toString(Config.class));
     }
 
     private static boolean allowMultiTargetRequest;

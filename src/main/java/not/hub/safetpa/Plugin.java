@@ -73,18 +73,12 @@ public final class Plugin extends JavaPlugin {
 
         for (PluginCommand cmd : getPluginCommands()) {
             switch (cmd.getLabel()) {
-                case "tpa":
-                    commands.put("tpa", new AskCmd(cmd));
-                case "tpy":
-                    commands.put("tpy", new AcceptCmd(cmd));
-                case "tpn":
-                    commands.put("tpn", new DenyCmd(cmd));
-                case "tpt":
-                    commands.put("tpt", new ToggleCmd(cmd));
-                case "tpi":
-                    commands.put("tpi", new IgnoreCmd(cmd));
-                default:
-                    throw new IllegalStateException("Unknown command: " + cmd.getLabel() + " " + cmd.getAliases());
+                case "tpa" -> commands.put("tpa", new AskCmd(cmd));
+                case "tpy" -> commands.put("tpy", new AcceptCmd(cmd));
+                case "tpn" -> commands.put("tpn", new DenyCmd(cmd));
+                case "tpt" -> commands.put("tpt", new ToggleCmd(cmd));
+                case "tpi" -> commands.put("tpi", new IgnoreCmd(cmd));
+                default -> throw new IllegalStateException("Unknown command: " + cmd.getLabel() + " " + cmd.getAliases());
             }
         }
 
