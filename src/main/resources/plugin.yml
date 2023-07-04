@@ -1,36 +1,43 @@
-name: ${project.artifactId}
+name: ${project.name}
 version: ${project.version}
-description: Player self-service teleport requests
-authors: [ nothub, AlexProgrammerDE, MaybeEthereas ]
+description: ${project.description}
+website: ${project.url}
+author: nothub
+authors: [ AlexProgrammerDE, MaybeEther, SooStrator ]
 main: not.hub.safetpa.Plugin
-api-version: 1.13
+api-version: 1.20
 
 commands:
   tpa:
-    description: Send TP Request (/tpa NAME .. or .. /tpask NAME)
+    description: Send TP Request
+    usage: /tpa <name> .. or .. /tpask <name>
     aliases: [ tpask ]
     permission: tpa.tpa
-    permission-message: Insufficient permissions, you should harass your Admin because of this!
+    permission-message: Insufficient permissions, you should harass your admin because of this!
   tpy:
-    description: Accept TP Request (/tpy NAME .. or .. /tpaccept NAME)
+    description: Accept TP Request
+    usage: /tpy <name> .. or .. /tpaccept <name>
     aliases: [ tpaccept ]
     permission: tpa.tpy
-    permission-message: Insufficient permissions, you should harass your Admin because of this!
+    permission-message: Insufficient permissions, you should harass your admin because of this!
   tpn:
-    description: Deny TP Request (/tpn NAME .. or .. /tpdeny NAME)
+    description: Deny TP Request
+    usage: /tpn <name> .. or .. /tpdeny <name>
     aliases: [ tpdeny ]
     permission: tpa.tpn
-    permission-message: Insufficient permissions, you should harass your Admin because of this!
+    permission-message: Insufficient permissions, you should harass your admin because of this!
   tpt:
-    description: Toggle TP Requests (/tpt .. or .. /tptoggle)
+    description: Toggle TP Requests
+    usage: /tpt .. or .. /tptoggle
     aliases: [ tptoggle ]
     permission: tpa.tpt
-    permission-message: Insufficient permissions, you should harass your Admin because of this!
+    permission-message: Insufficient permissions, you should harass your admin because of this!
   tpi:
-    description: Ignore TP requests (/tpi NAME .. or .. /tpignore NAME)
+    description: Ignore TP requests
+    usage: /tpi <name> .. or .. /tpignore <name>
     aliases: [ tpignore ]
     permission: tpa.tpi
-    permission-message: Insufficient permissions, you should harass your Admin because of this!
+    permission-message: Insufficient permissions, you should harass your admin because of this!
 
 permissions:
   tpa.tpa:
