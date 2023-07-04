@@ -1,22 +1,3 @@
-# ignore all files
-*
-# but include directories
-!*/
-
-# git
-!/**/.gitkeep
-!/.gitignore
-!/.gitmodules
-
-# java
-!/**/src/**
-
-# maven
-!/**/pom.xml
-
-# misc
-!/.github/**
-!/convenience
-!/*.md
-!/.editorconfig
-!/LICENSE
+/.idea/
+/.vscode/
+/*.iml
