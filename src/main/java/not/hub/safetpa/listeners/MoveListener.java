@@ -1,6 +1,6 @@
 package not.hub.safetpa.listeners;
 
-import lombok.RequiredArgsConstructor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import not.hub.safetpa.Plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -9,10 +9,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
-@RequiredArgsConstructor
 public class MoveListener implements Listener {
 
     private final Plugin plugin;
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public MoveListener(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -28,13 +32,13 @@ public class MoveListener implements Listener {
                     scheduler.cancelTask(taskId);
 
                     Plugin.sendMessage(event.getPlayer(), ChatColor.RED + "Teleport failed!");
-                    plugin.getRequestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
+                    plugin.requestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
                         Player target = plugin.getServer().getPlayer(request.target().uuid());
                         if (target != null) {
                             Plugin.sendMessage(target, ChatColor.GOLD + "Teleport failed!");
                         }
                     });
-                    plugin.getRequestManager().removeRequestsByRequester(event.getPlayer());
+                    plugin.requestManager().removeRequestsByRequester(event.getPlayer());
                 }
             });
             event.getPlayer().removeMetadata("safetpa-tpid", plugin);

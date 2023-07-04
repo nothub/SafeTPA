@@ -1,7 +1,7 @@
 package not.hub.safetpa;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.papermc.lib.PaperLib;
-import lombok.Getter;
 import not.hub.safetpa.listeners.MoveListener;
 import not.hub.safetpa.util.Ignores;
 import org.bstats.bukkit.Metrics;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-
 import java.util.regex.Pattern;
 
 public final class Plugin extends JavaPlugin {
@@ -25,8 +24,12 @@ public final class Plugin extends JavaPlugin {
     private static final String BLOCKED_PREFIX = "requests-blocked-";
     private static final Pattern USERNAME_SANITISATION_PATTERN = Pattern.compile("[^a-zA-Z\\d_ ]");
 
-    @Getter
     private final RequestManager requestManager = new RequestManager();
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public RequestManager requestManager() {
+        return requestManager;
+    }
 
     public static void sendMessage(Player player, String message) {
         player.sendMessage(message);
@@ -40,6 +43,7 @@ public final class Plugin extends JavaPlugin {
         return name;
     }
 
+    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
@@ -313,6 +317,7 @@ public final class Plugin extends JavaPlugin {
         }
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private void loadConfig() {
         // defaults
         getConfig().addDefault("allow-multi-target-request", true);

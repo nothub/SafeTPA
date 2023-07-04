@@ -3,6 +3,7 @@ package not.hub.safetpa.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.util.UUID;
 public class Ignores {
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
+
+    @SuppressFBWarnings("MS_CANNOT_BE_FINAL")
     public static Path dir = Path.of("plugins").resolve("SafeTPA").resolve("ignores");
 
     private static Path path(UUID player) {
@@ -35,6 +38,7 @@ public class Ignores {
         }
     }
 
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     private static void save(UUID player, Set<UUID> ignores) {
         var path = path(player);
 
@@ -43,7 +47,7 @@ public class Ignores {
 
         var json = gson.toJson(ignores);
         try {
-            Files.write(path, json.getBytes());
+            Files.writeString(path, json);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
