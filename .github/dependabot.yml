@@ -5,11 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      time: "12:00"
-      timezone: "Europe/Berlin"
+    target-branch: "dev"
     assignees:
-      - "nothub"
-    reviewers:
       - "nothub"
     commit-message:
       prefix: "maven"
@@ -19,11 +16,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      time: "12:00"
-      timezone: "Europe/Berlin"
+    target-branch: "dev"
     assignees:
-      - "nothub"
-    reviewers:
       - "nothub"
     commit-message:
       prefix: "github-actions"
