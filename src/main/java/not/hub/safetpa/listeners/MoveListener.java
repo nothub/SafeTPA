@@ -20,26 +20,26 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        if (!event.hasChangedPosition()) return;
+
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
-        if (event.hasChangedPosition()) {
-            event.getPlayer().getMetadata("safetpa-tpid").forEach(meta -> {
-                int taskId = meta.asInt();
+        event.getPlayer().getMetadata("safetpa-tpid").forEach(meta -> {
+            int taskId = meta.asInt();
 
-                if (!scheduler.isCurrentlyRunning(taskId) && scheduler.isQueued(taskId)) {
-                    scheduler.cancelTask(taskId);
+            if (!scheduler.isCurrentlyRunning(taskId) && scheduler.isQueued(taskId)) {
+                scheduler.cancelTask(taskId);
 
-                    Plugin.sendMessage(event.getPlayer(), ChatColor.RED + "Teleport failed!");
-                    plugin.requestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
-                        Player target = plugin.getServer().getPlayer(request.target().uuid());
-                        if (target != null) {
-                            Plugin.sendMessage(target, ChatColor.GOLD + "Teleport failed!");
-                        }
-                    });
-                    plugin.requestManager().removeRequestsByRequester(event.getPlayer());
-                }
-            });
-            event.getPlayer().removeMetadata("safetpa-tpid", plugin);
-        }
+                Plugin.sendMessage(event.getPlayer(), ChatColor.RED + "Teleport failed!");
+                plugin.requestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
+                    Player target = plugin.getServer().getPlayer(request.target().uuid());
+                    if (target != null) {
+                        Plugin.sendMessage(target, ChatColor.GOLD + "Teleport failed!");
+                    }
+                });
+                plugin.requestManager().removeRequestsByRequester(event.getPlayer());
+            }
+        });
+        event.getPlayer().removeMetadata("safetpa-tpid", plugin);
     }
 
 }
