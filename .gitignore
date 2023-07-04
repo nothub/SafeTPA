@@ -1,4 +1,6 @@
 /.idea/
-/.vscode/
 /*.iml
+/.vscode/
+
 /target/
+/server/
