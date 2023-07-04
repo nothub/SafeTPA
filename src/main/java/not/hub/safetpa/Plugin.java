@@ -93,7 +93,7 @@ public final class Plugin extends JavaPlugin {
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
             // Target is sender, we just do nothing.
-            sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
+            sendMessage(sender, ChatColor.GOLD + "Ignoring command because it does not make much sense!");
             return false;
         }
 
