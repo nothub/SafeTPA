@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 @RequiredArgsConstructor
 public class MoveListener implements Listener {
+
     private final Plugin plugin;
 
     @EventHandler
@@ -39,4 +40,5 @@ public class MoveListener implements Listener {
             event.getPlayer().removeMetadata("safetpa-tpid", plugin);
         }
     }
+
 }

@@ -3,6 +3,7 @@ package not.hub.safetpa;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import not.hub.safetpa.listeners.MoveListener;
+import not.hub.safetpa.util.Ignores;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -14,9 +15,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+
+import java.util.regex.Pattern;
+
 public final class Plugin extends JavaPlugin {
 
-    public static final String BLOCKED_PREFIX = "requests-blocked-";
+    private static final String BLOCKED_PREFIX = "requests-blocked-";
+    private static final Pattern USERNAME_SANITISATION_PATTERN = Pattern.compile("[^a-zA-Z\\d_ ]");
+
     @Getter
     private final RequestManager requestManager = new RequestManager();
 
@@ -25,7 +33,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     private static String sanitizeUsername(String name) {
-        name = name.replaceAll("[^a-zA-Z\\d_ ]", "");
+        name = USERNAME_SANITISATION_PATTERN.matcher(name).replaceAll("");
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
@@ -40,6 +48,8 @@ public final class Plugin extends JavaPlugin {
 
         loadConfig();
 
+        Ignores.dir = Path.of(getConfig().getString("ignores-path"));
+
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
         getServer().getScheduler().runTaskTimer(this, this::clearOldRequests, 20, 20);
@@ -47,7 +57,6 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
-
         if (!(commandSender instanceof Player sender))
             return true;
 
@@ -62,37 +71,63 @@ public final class Plugin extends JavaPlugin {
 
         if (args.length == 0) {
             sendMessage(sender, ChatColor.GOLD + "You need to run this command with an argument, like this:");
-            sendMessage(sender, "/tpa NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpy NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpn NAME");
+            sendMessage(sender, "/tpa NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpy NAME " + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/tpn NAME" + ChatColor.GOLD + ".. or .. " + ChatColor.RESET + "/ignoretp NAME");
             return false;
         }
 
+        // If this check is passed (target is valid / if case is not executed),
+        // args[0] is guranteed to contain the name of a player that currently is online.
         if (isInvalidTarget(args[0])) {
+            sendMessage(sender, ChatColor.GOLD + "Player not found.");
+            return false;
+        }
+        Player target = getServer().getPlayer(args[0]);
+        if (target == null) {
             sendMessage(sender, ChatColor.GOLD + "Player not found.");
             return false;
         }
 
         if (sender.getName().equalsIgnoreCase(args[0])) {
+            // Target is sender, we just do nothing.
             sendMessage(sender, ChatColor.GOLD + "Teleported to " + ChatColor.RESET + sender.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return false;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpa")) {
-            askTP(getServer().getPlayer(args[0]), sender);
+            askTP(target, sender);
             return true;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpy")) {
-            acceptTP(sender, getServer().getPlayer(args[0]));
+            acceptTP(sender, target);
             return true;
         }
 
         if (command.getLabel().equalsIgnoreCase("tpn")) {
-            denyTP(sender, getServer().getPlayer(args[0]));
+            denyTP(sender, target);
+            return true;
+        }
+
+        if (command.getLabel().equalsIgnoreCase("tpi")) {
+            ignoreTP(sender, target);
             return true;
         }
 
         return false;
+    }
 
+    private void ignoreTP(Player sender, Player target) {
+        if (Ignores.get(sender.getUniqueId(), target.getUniqueId())) {
+            Ignores.set(sender.getUniqueId(), target.getUniqueId(), false);
+            sendMessage(sender, "No longer ignoring tp requests from " + target.getName());
+        } else {
+            boolean success = Ignores.set(sender.getUniqueId(), target.getUniqueId(), true);
+            if (success) {
+                sendMessage(sender, "Ignoring tp requests from " + target.getName());
+            } else {
+                sendMessage(sender, ChatColor.RED + "Maximum reached, can not add more ignores!");
+            }
+        }
     }
 
     public void clearOldRequests() {
@@ -100,8 +135,8 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
-        if (tpTarget == null || tpRequester == null) {
-            return;
+        if (Ignores.get(tpTarget.getUniqueId(), tpRequester.getUniqueId())) {
+            sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
 
         if (getConfig().getBoolean("spawn-tp-deny") && isAtSpawn(tpRequester)) {
@@ -141,11 +176,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void acceptTP(Player tpTarget, Player tpRequester) {
-
-        if (tpTarget == null || tpRequester == null) {
-            return;
-        }
-
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return;
@@ -160,10 +190,6 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void denyTP(Player tpTarget, Player tpRequester) {
-        if (tpTarget == null || tpRequester == null) {
-            return;
-        }
-
         if (!requestManager.isRequestActive(tpTarget, tpRequester)) {
             sendMessage(tpTarget, ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return;
@@ -243,7 +269,7 @@ public final class Plugin extends JavaPlugin {
     private Vector getOverworldXzVector(Player requester) {
         return new Vector(
             Math.abs(requester.getLocation().getX()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1),
-            0,
+            0.0,
             Math.abs(requester.getLocation().getZ()) * (requester.getWorld().getEnvironment() == World.Environment.NETHER ? 8 : 1)
         );
     }
@@ -297,29 +323,49 @@ public final class Plugin extends JavaPlugin {
         getConfig().addDefault("distance-limit", false);
         getConfig().addDefault("distance-limit-radius", 10000);
         getConfig().addDefault("tp-delay-seconds", 0);
+        getConfig().addDefault("ignores-path", "");
         getConfig().options().copyDefaults(true);
         saveConfig();
 
         // validate
+
         if (getConfig().getInt("request-timeout-seconds") < 10) {
             getConfig().set("request-timeout-seconds", 10);
             saveConfig();
         }
+
         if (getConfig().getInt("unvanish-delay-ticks") < 1) {
             getConfig().set("unvanish-delay-ticks", 1);
             saveConfig();
         }
+
         if (getConfig().getInt("spawn-tp-deny-radius") < 16) {
             getConfig().set("spawn-tp-deny-radius", 16);
             saveConfig();
         }
+
         if (getConfig().getInt("distance-limit-radius") < 16) {
             getConfig().set("distance-limit-radius", 16);
             saveConfig();
         }
+
         if (getConfig().getInt("tp-delay-seconds") < 0) {
             getConfig().set("tp-delay-seconds", 0);
             saveConfig();
         }
+
+        if (getConfig().getString("ignores-path") == null || getConfig().getString("ignores-path").isBlank()) {
+            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
+            saveConfig();
+        }
+        try {
+            Path.of(getConfig().getString("ignores-path"));
+        } catch (InvalidPathException ex) {
+            getLogger().warning("Invalid ignores-path config: " + ex.getMessage());
+            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
+            saveConfig();
+        }
+        getLogger().info("Storing ignore lookup files to: " + Path.of(getConfig().getString("ignores-path")).toAbsolutePath());
+
     }
 }
