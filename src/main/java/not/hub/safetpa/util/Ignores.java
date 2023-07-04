@@ -4,33 +4,34 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import not.hub.safetpa.Config;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 
 public class Ignores {
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
 
-    @SuppressFBWarnings("MS_CANNOT_BE_FINAL")
-    public static Path dir = Path.of("plugins").resolve("SafeTPA").resolve("ignores");
-
-    private static Path path(UUID player) {
-        return dir.resolve(player.toString() + ".json");
+    private static Path filePath(UUID player) {
+        return Config.ignoresPath().resolve(player.toString() + ".json");
     }
 
     private static Set<UUID> load(UUID player) {
         try {
-            var reader = Files.newBufferedReader(path(player));
+            var reader = Files.newBufferedReader(filePath(player));
             return gson.fromJson(reader, type);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             return new HashSet<>(1);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -40,7 +41,7 @@ public class Ignores {
 
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     private static void save(UUID player, Set<UUID> ignores) {
-        var path = path(player);
+        var path = filePath(player);
 
         // create directory structure up to parent
         path.toFile().getParentFile().mkdirs();
@@ -52,6 +53,8 @@ public class Ignores {
             ex.printStackTrace();
         }
     }
+
+    public static final Function<JavaPlugin, String> defaultPath = (plugin -> plugin.getDataFolder().toPath().resolve("ignores").toString());
 
     public static boolean get(UUID player, UUID target) {
         return load(player).contains(target);
