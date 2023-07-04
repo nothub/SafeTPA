@@ -10,31 +10,31 @@ api-version: 1.20
 commands:
   tpa:
     description: Send TP Request
-    usage: /tpa <name> .. or .. /tpask <name>
+    usage: /tpa <name>
     aliases: [ tpask ]
     permission: tpa.tpa
     permission-message: Insufficient permissions, you should harass your admin because of this!
   tpy:
     description: Accept TP Request
-    usage: /tpy <name> .. or .. /tpaccept <name>
+    usage: /tpy <name>
     aliases: [ tpaccept ]
     permission: tpa.tpy
     permission-message: Insufficient permissions, you should harass your admin because of this!
   tpn:
     description: Deny TP Request
-    usage: /tpn <name> .. or .. /tpdeny <name>
+    usage: /tpn <name>
     aliases: [ tpdeny ]
     permission: tpa.tpn
     permission-message: Insufficient permissions, you should harass your admin because of this!
   tpt:
     description: Toggle TP Requests
-    usage: /tpt .. or .. /tptoggle
+    usage: /tpt
     aliases: [ tptoggle ]
     permission: tpa.tpt
     permission-message: Insufficient permissions, you should harass your admin because of this!
   tpi:
     description: Ignore TP requests
-    usage: /tpi <name> .. or .. /tpignore <name>
+    usage: /tpi [<name>]
     aliases: [ tpignore ]
     permission: tpa.tpi
     permission-message: Insufficient permissions, you should harass your admin because of this!
