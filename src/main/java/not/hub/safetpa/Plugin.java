@@ -2,27 +2,31 @@ package not.hub.safetpa;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.papermc.lib.PaperLib;
+import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
 import not.hub.safetpa.util.Ignores;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class Plugin extends JavaPlugin {
 
     private static final String BLOCKED_PREFIX = "requests-blocked-";
-    private static final Pattern USERNAME_SANITISATION_PATTERN = Pattern.compile("[^a-zA-Z\\d_ ]");
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("[^a-zA-Z\\d_ ]");
 
     private final RequestManager requestManager = new RequestManager();
 
@@ -35,12 +39,27 @@ public final class Plugin extends JavaPlugin {
         player.sendMessage(message);
     }
 
-    private static String sanitizeUsername(String name) {
-        name = USERNAME_SANITISATION_PATTERN.matcher(name).replaceAll("");
+    public static String sanitizeUsername(String name) {
+        name = USERNAME_PATTERN.matcher(name).replaceAll("");
         if (name.length() < 1 || name.length() > 16) {
             return null;
         }
         return name;
+    }
+
+    Map<String, Command> commands = new HashMap<>();
+
+    public Set<PluginCommand> getPluginCommands() {
+        return getServer()
+            .getCommandMap()
+            .getKnownCommands()
+            .values()
+            .stream()
+            .filter(org.bukkit.command.Command::isRegistered)
+            .filter(cmd -> cmd instanceof PluginCommand)
+            .map(cmd -> (PluginCommand) cmd)
+            .filter(cmd -> cmd.getPlugin() == this)
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
@@ -50,9 +69,24 @@ public final class Plugin extends JavaPlugin {
 
         new Metrics(this, 11798);
 
-        loadConfig();
+        Config.load(this);
 
-        Ignores.dir = Path.of(getConfig().getString("ignores-path"));
+        for (PluginCommand cmd : getPluginCommands()) {
+            switch (cmd.getLabel()) {
+                case "tpa":
+                    commands.put("tpa", new AskCmd(cmd));
+                case "tpy":
+                    commands.put("tpy", new AcceptCmd(cmd));
+                case "tpn":
+                    commands.put("tpn", new DenyCmd(cmd));
+                case "tpt":
+                    commands.put("tpt", new ToggleCmd(cmd));
+                case "tpi":
+                    commands.put("tpi", new IgnoreCmd(cmd));
+                default:
+                    throw new IllegalStateException("Unknown command: " + cmd.getLabel() + " " + cmd.getAliases());
+            }
+        }
 
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
 
@@ -60,7 +94,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command command, @NotNull String commandLabel, String[] args) {
         if (!(commandSender instanceof Player sender))
             return true;
 
@@ -70,6 +104,9 @@ public final class Plugin extends JavaPlugin {
             toggleRequestBlock(sender);
             return true;
         }
+
+        // 0 || 1 arg commands
+        // TODO: move tpi here
 
         // > 0 arg commands
 
@@ -81,7 +118,7 @@ public final class Plugin extends JavaPlugin {
 
         // If this check is passed (target is valid / if case is not executed),
         // args[0] is guranteed to contain the name of a player that currently is online.
-        if (isInvalidTarget(args[0])) {
+        if (isInvalidTarget(getServer(), args[0])) {
             sendMessage(sender, ChatColor.GOLD + "Player not found.");
             return false;
         }
@@ -135,7 +172,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     public void clearOldRequests() {
-        requestManager.clearOldRequests(getConfig().getInt("request-timeout-seconds"));
+        requestManager.clearOldRequests(Config.requestTimeoutSeconds());
     }
 
     private void askTP(Player tpTarget, Player tpRequester) {
@@ -143,7 +180,7 @@ public final class Plugin extends JavaPlugin {
             sendMessage(tpRequester, tpTarget.getName() + " is ignoring your tpa requests!");
         }
 
-        if (getConfig().getBoolean("spawn-tp-deny") && isAtSpawn(tpRequester)) {
+        if (Config.spawnTpDeny() && isAtSpawn(tpRequester)) {
             getLogger().info("Denying teleport request while in spawn area from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
             return;
@@ -154,8 +191,8 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
-        if (getConfig().getBoolean("distance-limit") &&
-            getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > getConfig().getInt("distance-limit-radius")) {
+        if (Config.distanceLimit() &&
+            getOverworldXzVector(tpRequester).distance(getOverworldXzVector(tpTarget)) > Config.distanceLimitRadius()) {
             getLogger().info("Denying teleport request while out of range from " + tpRequester.getName() + " to " + tpTarget.getName());
             sendMessage(tpRequester, ChatColor.GOLD + "You are too far away from " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + " to teleport!");
             return;
@@ -166,7 +203,7 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
-        if (!getConfig().getBoolean("allow-multi-target-request") && requestManager.isRequestActiveByRequester(tpRequester)) {
+        if (!Config.allowMultiTargetRequest() && requestManager.isRequestActiveByRequester(tpRequester)) {
             sendMessage(tpRequester, ChatColor.GOLD + "Please wait for your existing request to be accepted or denied.");
             return;
         }
@@ -216,7 +253,7 @@ public final class Plugin extends JavaPlugin {
             return;
         }
 
-        int tpDelay = getConfig().getInt("tp-delay-seconds");
+        int tpDelay = Config.tpDelaySeconds();
         if (tpDelay > 0) {
             tpTarget.sendMessage(ChatColor.GOLD + "Teleporting " + tpRequester.getDisplayName() + " in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
             tpRequester.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
@@ -245,7 +282,7 @@ public final class Plugin extends JavaPlugin {
             }
         }).thenAccept(ignored -> {
             // Unvanish requester after n ticks
-            getServer().getScheduler().scheduleSyncDelayedTask(this, () -> this.unvanish(tpRequester), getConfig().getInt("unvanish-delay-ticks"));
+            getServer().getScheduler().scheduleSyncDelayedTask(this, () -> this.unvanish(tpRequester), Config.unvanishDelayTicks());
         });
     }
 
@@ -284,10 +321,10 @@ public final class Plugin extends JavaPlugin {
             return false;
         }
         Vector pos = getOverworldXzVector(requester);
-        return pos.getX() <= getConfig().getInt("spawn-tp-deny-radius") && pos.getZ() <= getConfig().getInt("spawn-tp-deny-radius");
+        return pos.getX() <= Config.spawnTpDenyRadius() && pos.getZ() <= Config.spawnTpDenyRadius();
     }
 
-    private boolean isInvalidTarget(String args) {
+    private static boolean isInvalidTarget(Server server, String args) {
         // check for empty argument
         if (args.isEmpty()) {
             return true;
@@ -297,8 +334,8 @@ public final class Plugin extends JavaPlugin {
         if (target == null) {
             return true;
         }
-        // check if player is online
-        return getServer().getPlayer(target) == null;
+        // check if player might be online
+        return server.getPlayer(target) == null;
     }
 
     private void vanish(Player player) {
@@ -315,62 +352,5 @@ public final class Plugin extends JavaPlugin {
                 onlinePlayer.showPlayer(this, player);
             }
         }
-    }
-
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-    private void loadConfig() {
-        // defaults
-        getConfig().addDefault("allow-multi-target-request", true);
-        getConfig().addDefault("request-timeout-seconds", 60);
-        getConfig().addDefault("unvanish-delay-ticks", 1);
-        getConfig().addDefault("spawn-tp-deny", true);
-        getConfig().addDefault("spawn-tp-deny-radius", 1500);
-        getConfig().addDefault("distance-limit", false);
-        getConfig().addDefault("distance-limit-radius", 10000);
-        getConfig().addDefault("tp-delay-seconds", 0);
-        getConfig().addDefault("ignores-path", "");
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-
-        // validate
-
-        if (getConfig().getInt("request-timeout-seconds") < 10) {
-            getConfig().set("request-timeout-seconds", 10);
-            saveConfig();
-        }
-
-        if (getConfig().getInt("unvanish-delay-ticks") < 1) {
-            getConfig().set("unvanish-delay-ticks", 1);
-            saveConfig();
-        }
-
-        if (getConfig().getInt("spawn-tp-deny-radius") < 16) {
-            getConfig().set("spawn-tp-deny-radius", 16);
-            saveConfig();
-        }
-
-        if (getConfig().getInt("distance-limit-radius") < 16) {
-            getConfig().set("distance-limit-radius", 16);
-            saveConfig();
-        }
-
-        if (getConfig().getInt("tp-delay-seconds") < 0) {
-            getConfig().set("tp-delay-seconds", 0);
-            saveConfig();
-        }
-
-        if (getConfig().getString("ignores-path") == null || getConfig().getString("ignores-path").isBlank()) {
-            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
-            saveConfig();
-        }
-        try {
-            Path.of(getConfig().getString("ignores-path"));
-        } catch (InvalidPathException ex) {
-            getLogger().warning("Invalid ignores-path config: " + ex.getMessage());
-            getConfig().set("ignores-path", getDataFolder().toPath().resolve("ignores").toString());
-            saveConfig();
-        }
-        getLogger().info("Storing ignore lookup files to: " + Path.of(getConfig().getString("ignores-path")).toAbsolutePath());
-
     }
 }
