@@ -1,10 +1,9 @@
 package not.hub.safetpa;
 
-import not.hub.safetpa.util.Ignores;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import not.hub.safetpa.util.Paths;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 public final class Config {
@@ -17,7 +16,8 @@ public final class Config {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
     }
 
-    public static void load(Plugin plugin) {
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE") // the config api makes me do this
+    public static synchronized void load(Plugin plugin) {
         FileConfiguration config = plugin.getConfig();
 
         config.addDefault("allow-multi-target-request", true);
@@ -74,9 +74,7 @@ public final class Config {
             config.set("ignores-path", Ignores.defaultPath.apply(plugin));
             plugin.saveConfig();
         }
-        try {
-            Path.of(config.getString("ignores-path"));
-        } catch (InvalidPathException ex) {
+        if (!Paths.isValid(config.getString("ignores-path"))) {
             config.set("ignores-path", Ignores.defaultPath.apply(plugin));
             plugin.saveConfig();
         }
