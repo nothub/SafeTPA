@@ -19,7 +19,11 @@ import java.util.UUID;
 import java.util.function.Function;
 
 
-public class Ignores {
+public final class Ignores {
+    private Ignores() {
+        throw new IllegalStateException(Ignores.class.getCanonicalName() + " is a static utility class and can not be instantiated!");
+    }
+
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
 

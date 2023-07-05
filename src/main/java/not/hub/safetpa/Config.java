@@ -7,7 +7,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
-public class Config {
+public final class Config {
+    private Config() {
+        throw new IllegalStateException(Config.class.getCanonicalName() + " is a static utility class and can not be instantiated!");
+    }
+
     private static boolean initialized = false;
     private static void assertInitialized() {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
