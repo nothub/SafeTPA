@@ -84,8 +84,10 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command command, @NotNull String commandLabel, String[] args) {
-        if (!(commandSender instanceof Player sender))
+        if (!(commandSender instanceof Player sender)) {
+            getLogger().warning("Ignoring command executed by non-player sender: " + commandSender.getName());
             return true;
+        }
 
         // 0 arg commands
 
