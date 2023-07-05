@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RequestManager {
 
@@ -20,11 +19,11 @@ public class RequestManager {
                 pendingRequests.remove(request);
                 Player requester = Bukkit.getPlayer(request.requester().uuid());
                 if (requester != null) {
-                    Plugin.sendMessage(requester, ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.target().name() + ChatColor.GOLD + " timed out.");
+                    requester.sendMessage(ChatColor.GOLD + "Your teleport request to " + ChatColor.RESET + request.target().name() + ChatColor.GOLD + " timed out.");
                 }
                 Player target = Bukkit.getPlayer(request.target().uuid());
                 if (target != null) {
-                    Plugin.sendMessage(target, ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.requester().name() + ChatColor.GOLD + " timed out.");
+                    target.sendMessage(ChatColor.GOLD + "The teleport request from " + ChatColor.RESET + request.requester().name() + ChatColor.GOLD + " timed out.");
                 }
             }
         });
