@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.papermc.lib.PaperLib;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
-import not.hub.safetpa.util.Ignores;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;

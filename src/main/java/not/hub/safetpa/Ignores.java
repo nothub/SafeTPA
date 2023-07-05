@@ -1,10 +1,9 @@
-package not.hub.safetpa.util;
+package not.hub.safetpa;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import not.hub.safetpa.Config;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
