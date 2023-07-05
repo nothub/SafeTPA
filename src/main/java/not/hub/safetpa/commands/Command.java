@@ -2,34 +2,46 @@ package not.hub.safetpa.commands;
 
 import not.hub.safetpa.Plugin;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public abstract class Command {
     public final String label;
-
-    public final Set<String> aliases;
-
+    public final List<String> aliases;
     public final String description;
-
     public final String usage;
+    private final int argsMin;
+    private final int argsMax;
 
-    public Command(String label, Set<String> aliases, String description, String usage) {
+    public Command(String label, List<String> aliases, String description, String usage, int argsMin, int argsMax) {
         this.label = label;
         this.aliases = aliases;
         this.description = description;
         this.usage = usage;
+        this.argsMin = argsMin;
+        this.argsMax = argsMax;
     }
 
-    public Command(PluginCommand pluginCommand) {
+    public Command(PluginCommand pluginCommand, int argsMin, int argsMax) {
         this(pluginCommand.getLabel(),
-            pluginCommand.getAliases().stream().collect(Collectors.toUnmodifiableSet()),
+            pluginCommand.getAliases().stream().toList(),
             pluginCommand.getDescription(),
-            pluginCommand.getUsage());
+            pluginCommand.getUsage(),
+            argsMin, argsMax);
     }
 
-    public abstract boolean validate(String... args);
+    boolean validate(String... args) {
+        return args.length >= argsMin && args.length <= argsMax;
+    }
 
-    public abstract void run(Plugin plugin, String... args);
+    public boolean invoke(Plugin plugin, Player sender, String... args) {
+        if (!validate(args)) {
+            sender.sendMessage(usage);
+            return false;
+        }
+        return run(plugin, sender, args);
+    }
+
+    abstract boolean run(Plugin plugin, Player sender, String... args);
 }
