@@ -8,11 +8,11 @@ import java.nio.file.Path;
 
 public final class Config {
     private Config() {
-        throw new IllegalStateException(Config.class.getCanonicalName() + " is a static utility class and can not be instantiated!");
+        throw new java.lang.UnsupportedOperationException(Config.class.getCanonicalName() + " is a utility class and cannot be instantiated!");
     }
 
     private static boolean initialized = false;
-    private static void assertInitialized() {
+    private static synchronized void assertInitialized() {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
     }
 
