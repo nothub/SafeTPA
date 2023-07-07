@@ -29,12 +29,12 @@ public class RequestManager {
         });
     }
 
-    void addRequest(Player target, Player requester) {
+    public void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
         pendingRequests.put(Request.of(target, requester), System.currentTimeMillis());
     }
 
-    void removeRequests(Player target, Player requester) {
+    public void removeRequests(Player target, Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
                 pendingRequests.remove(request);
@@ -58,7 +58,7 @@ public class RequestManager {
         }
     }
 
-    boolean isRequestActive(Player target, Player requester) {
+    public boolean isRequestActive(Player target, Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
                 return true;
@@ -77,7 +77,7 @@ public class RequestManager {
         return false;
     }
 
-    boolean isRequestActiveByRequester(Player requester) {
+    public boolean isRequestActiveByRequester(Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 return true;

@@ -1,17 +1,38 @@
 package not.hub.safetpa.commands;
 
+import not.hub.safetpa.Ignores;
 import not.hub.safetpa.Plugin;
+import not.hub.safetpa.util.Players;
+import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 
-public class IgnoreCmd extends Command {
-    public IgnoreCmd(PluginCommand pluginCommand) {
-        super(pluginCommand, 0, 1);
+// tpi (tpignore)
+public class IgnoreCmd extends TpCommand {
+    public IgnoreCmd(Plugin plugin, PluginCommand pluginCommand) {
+        super(plugin, pluginCommand);
     }
 
     @Override
-    public boolean run(Plugin plugin, Player sender, String... args) {
-        // TODO
-        return false;
+    public boolean run(Player commandSender, String targetName) {
+        var targetUuid = Players.getPlayerUUID(plugin.getServer(), targetName);
+        if (targetUuid == null) {
+            commandSender.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RESET + targetName + ChatColor.GOLD + " not found.");
+            return false;
+        }
+
+        if (Ignores.get(commandSender.getUniqueId(), targetUuid)) {
+            Ignores.set(commandSender.getUniqueId(), targetUuid, false);
+            commandSender.sendMessage("No longer ignoring tp requests from " + targetName);
+        } else {
+            boolean success = Ignores.set(commandSender.getUniqueId(), targetUuid, true);
+            if (success) {
+                commandSender.sendMessage("Ignoring tp requests from " + targetName);
+            } else {
+                commandSender.sendMessage(ChatColor.RED + "Maximum reached, can not add more ignores!");
+            }
+        }
+
+        return true;
     }
 }
