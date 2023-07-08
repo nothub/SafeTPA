@@ -1,0 +1,58 @@
+name: "${project.name}"
+version: "${project.version}"
+description: "${project.description}"
+website: "${project.url}"
+author: 'nothub'
+authors: [ 'AlexProgrammerDE', 'MaybeEther', 'SooStrator' ]
+main: 'not.hub.safetpa.Plugin'
+api-version: '1.20'
+depends: [ 'SuperVanish' ]
+
+commands:
+  tpa:
+    description: 'Send request'
+    usage: '/tpa <name>'
+    aliases: [ 'tpask' ]
+    permission: 'tpa.tpa'
+    permission-message: 'Insufficient permissions, you should harass your admin because of this!'
+  tpy:
+    description: 'Accept request'
+    usage: '/tpy <name>'
+    aliases: [ 'tpaccept', 'tpyes' ]
+    permission: 'tpa.tpy'
+    permission-message: 'Insufficient permissions, you should harass your admin because of this!'
+  tpn:
+    description: 'Deny request'
+    usage: '/tpn <name>'
+    aliases: [ 'tpdeny', 'tpno' ]
+    permission: 'tpa.tpn'
+    permission-message: 'Insufficient permissions, you should harass your admin because of this!'
+  tpi:
+    description: 'Ignore requests per player'
+    usage: '/tpi [<name>]'
+    aliases: [ 'tpignore' ]
+    permission: 'tpa.tpi'
+    permission-message: 'Insufficient permissions, you should harass your admin because of this!'
+  tpt:
+    description: 'Ignore requests globally'
+    usage: '/tpt'
+    aliases: [ 'tptoggle' ]
+    permission: 'tpa.tpt'
+    permission-message: 'Insufficient permissions, you should harass your admin because of this!'
+
+permissions:
+  tpa.tpa:
+    description: 'Send request'
+    default: true
+  tpa.tpy:
+    description: 'Accept request'
+    default: true
+  tpa.tpn:
+    description: 'Deny request'
+    default: true
+  tpa.tpi:
+    description: 'Ignore requests per player'
+    default: true
+  tpa.tpt:
+    description: 'Ignore requests globally'
+    default: true
