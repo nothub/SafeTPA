@@ -3,7 +3,6 @@ package not.hub.safetpa;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
@@ -41,7 +40,6 @@ public final class Ignores {
         }
     }
 
-    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     private static void save(UUID player, Set<UUID> ignores) {
         var path = filePath(player);
 

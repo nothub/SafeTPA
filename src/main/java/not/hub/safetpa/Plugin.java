@@ -1,6 +1,5 @@
 package not.hub.safetpa;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.papermc.lib.PaperLib;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
@@ -25,7 +24,6 @@ public final class Plugin extends JavaPlugin {
 
     private final RequestManager requestManager = new RequestManager();
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     public RequestManager requestManager() {
         return requestManager;
     }
@@ -45,7 +43,6 @@ public final class Plugin extends JavaPlugin {
             .collect(Collectors.toUnmodifiableSet());
     }
 
-    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);

@@ -1,6 +1,5 @@
 package not.hub.safetpa;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import not.hub.safetpa.util.Paths;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -16,7 +15,6 @@ public final class Config {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
     }
 
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE") // the config api makes me do this
     public static synchronized void load(Plugin plugin) {
         FileConfiguration config = plugin.getConfig();
 

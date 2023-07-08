@@ -1,6 +1,5 @@
 package not.hub.safetpa.listeners;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import not.hub.safetpa.Plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,7 +12,6 @@ public class MoveListener implements Listener {
 
     private final Plugin plugin;
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     public MoveListener(Plugin plugin) {
         this.plugin = plugin;
     }
