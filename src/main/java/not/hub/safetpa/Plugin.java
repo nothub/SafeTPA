@@ -122,6 +122,7 @@ public final class Plugin extends JavaPlugin {
     public void executeTPMove(Player tpTarget, Player tpRequester) {
         getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
+        // TODO: use https://github.com/LeonMangler/SuperVanish api instead
         Players.vanish(this, tpRequester);
 
         // execute teleport
