@@ -2,6 +2,9 @@ package not.hub.safetpa;
 
 import de.myzelyam.api.vanish.VanishAPI;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
 import org.bstats.bukkit.Metrics;
@@ -100,8 +103,9 @@ public final class Plugin extends JavaPlugin {
 
         // deny mounted target or requester
         if (tpTarget.getVehicle() != null || tpRequester.getVehicle() != null) {
-            tpTarget.sendMessage(ChatColor.RED + "Teleport failed!");
-            tpRequester.sendMessage(ChatColor.RED + "Teleport failed!");
+            TextComponent msg = Component.text("Teleport failed!", NamedTextColor.RED);
+            tpTarget.sendMessage(msg);
+            tpRequester.sendMessage(msg);
             return;
         }
 
@@ -133,8 +137,9 @@ public final class Plugin extends JavaPlugin {
                     tpTarget.sendMessage(tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + " teleported to you!");
                     tpRequester.sendMessage(ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
                 } else {
-                    tpTarget.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
-                    tpRequester.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
+                    TextComponent msg = Component.text("Teleport failed, you should harass your admin because of this!", NamedTextColor.RED);
+                    tpTarget.sendMessage(msg);
+                    tpRequester.sendMessage(msg);
                 }
             })
             .thenAccept(ignored -> {

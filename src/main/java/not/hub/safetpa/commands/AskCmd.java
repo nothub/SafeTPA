@@ -1,23 +1,13 @@
 package not.hub.safetpa.commands;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.chat.TextComponent;
 import not.hub.safetpa.*;
 import not.hub.safetpa.util.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.function.UnaryOperator;
 
 // tpa (tpask)
 public class AskCmd extends TpCommand {
@@ -29,7 +19,7 @@ public class AskCmd extends TpCommand {
     public boolean run(Player commandSender, String targetName) {
         var target = Players.getOnlinePlayer(plugin.getServer(), targetName);
         if (target == null) {
-            commandSender.sendMessage(ChatColor.GOLD + "Player not found.");
+            commandSender.sendMessage(Component.text("Player not found.", NamedTextColor.GOLD));
             return false;
         }
 
@@ -61,11 +51,14 @@ public class AskCmd extends TpCommand {
         }
 
         if (!Config.allowMultiTargetRequest() && RequestManager.isRequestActiveByRequester(commandSender)) {
-            commandSender.sendMessage(ChatColor.GOLD + "Please wait for your existing request to be accepted or denied.");
+            commandSender.sendMessage(
+                Component.text("Please wait for your existing request to be accepted or denied.", NamedTextColor.GOLD));
             return false;
         }
 
-        commandSender.sendMessage(ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + target.getName());
+        commandSender.sendMessage(
+            Component.text("Request sent to: ", NamedTextColor.GOLD)
+                .append(Component.text(target.getName())));
 
         target.sendMessage(
             Component.text(commandSender.getName())
