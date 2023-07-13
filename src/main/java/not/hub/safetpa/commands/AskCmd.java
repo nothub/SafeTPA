@@ -1,10 +1,23 @@
 package not.hub.safetpa.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.chat.TextComponent;
 import not.hub.safetpa.*;
 import not.hub.safetpa.util.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.function.UnaryOperator;
 
 // tpa (tpask)
 public class AskCmd extends TpCommand {
@@ -53,8 +66,22 @@ public class AskCmd extends TpCommand {
         }
 
         commandSender.sendMessage(ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + target.getName());
-        target.sendMessage(commandSender.getName() + "" + ChatColor.GOLD + " wants to teleport to you.");
-        target.sendMessage(ChatColor.GOLD + "Type " + ChatColor.RESET + "/tpy " + commandSender.getName() + ChatColor.RESET + ChatColor.GOLD + " to accept or " + ChatColor.RESET + "/tpn " + commandSender.getName() + ChatColor.GOLD + " to deny.");
+
+        commandSender.sendMessage(
+            Component.text(commandSender.getName())
+                .append(Component.text(" wants to teleport to you, ", NamedTextColor.GOLD))
+                .append(
+                    Component.text("[ACCEPT]", NamedTextColor.GREEN)
+                        .hoverEvent(Component.text("Accept the teleport").asHoverEvent())
+                        .clickEvent(ClickEvent.suggestCommand("/tpy " + commandSender.getName()))
+                )
+                .append(Component.text(" or ", NamedTextColor.GOLD))
+                .append(
+                    Component.text("[DECLINE]", NamedTextColor.RED)
+                        .hoverEvent(Component.text("Deny the teleport").asHoverEvent())
+                        .clickEvent(ClickEvent.suggestCommand("/tpn " + commandSender.getName()))
+                )
+        );
 
         RequestManager.addRequest(target, commandSender);
 
