@@ -67,7 +67,7 @@ public class AskCmd extends TpCommand {
 
         commandSender.sendMessage(ChatColor.GOLD + "Request sent to: " + ChatColor.RESET + target.getName());
 
-        commandSender.sendMessage(
+        target.sendMessage(
             Component.text(commandSender.getName())
                 .append(Component.text(" wants to teleport to you, ", NamedTextColor.GOLD))
                 .append(
