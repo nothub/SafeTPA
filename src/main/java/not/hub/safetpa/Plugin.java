@@ -8,7 +8,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -111,11 +110,25 @@ public final class Plugin extends JavaPlugin {
 
         int tpDelay = Config.tpDelaySeconds();
         if (tpDelay > 0) {
-            tpTarget.sendMessage(ChatColor.GOLD + "Teleporting " + tpRequester.getName() + " in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
-            tpRequester.sendMessage(ChatColor.GOLD + "Teleporting in " + ChatColor.RESET + tpDelay + ChatColor.GOLD + " seconds...");
+            tpTarget.sendMessage(
+                Component.text("Teleporting ", NamedTextColor.GOLD)
+                    .append(Component.text(tpRequester.getName()))
+                    .append(Component.text(" in ", NamedTextColor.GOLD))
+                    .append(Component.text(tpDelay))
+                    .append(Component.text(" seconds...", NamedTextColor.GOLD)));
+            tpRequester.sendMessage(
+                Component.text("Teleporting in ", NamedTextColor.GOLD)
+                    .append(Component.text(tpDelay))
+                    .append(Component.text(" seconds...", NamedTextColor.GOLD)));
+
             int taskId = getServer().getScheduler().scheduleSyncDelayedTask(this, () ->
                 executeTPMove(tpTarget, tpRequester), tpDelay * 20L);
 
+            if (taskId == -1) {
+                // TODO: handle error case: scheduling failed
+            }
+
+            // TODO: stop storing this in playerdata, we can just look up requests with the players uuid
             tpRequester.setMetadata("safetpa-tpid", new FixedMetadataValue(this, taskId));
         } else {
             executeTPMove(tpTarget, tpRequester);
@@ -134,8 +147,13 @@ public final class Plugin extends JavaPlugin {
         PaperLib.teleportAsync(tpRequester, tpTarget.getLocation())
             .thenAccept(result -> {
                 if (result) {
-                    tpTarget.sendMessage(tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + " teleported to you!");
-                    tpRequester.sendMessage(ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
+                    tpTarget.sendMessage(
+                        Component.text(tpRequester.getName())
+                            .append(Component.text(" teleported to you!", NamedTextColor.GOLD)));
+                    tpRequester.sendMessage(
+                        Component.text("Teleported to ", NamedTextColor.GOLD)
+                            .append(Component.text(tpTarget.getName()))
+                            .append(Component.text("!", NamedTextColor.GOLD)));
                 } else {
                     TextComponent msg = Component.text("Teleport failed, you should harass your admin because of this!", NamedTextColor.RED);
                     tpTarget.sendMessage(msg);
