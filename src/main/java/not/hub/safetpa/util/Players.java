@@ -1,7 +1,6 @@
 package not.hub.safetpa.util;
 
 import not.hub.safetpa.Config;
-import not.hub.safetpa.Plugin;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -51,19 +50,4 @@ public class Players {
         return pos.getX() <= Config.spawnTpDenyRadius() && pos.getZ() <= Config.spawnTpDenyRadius();
     }
 
-    public static void vanish(Plugin plugin, Player player) {
-        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-            if (!onlinePlayer.equals(player)) {
-                onlinePlayer.hidePlayer(plugin, player);
-            }
-        }
-    }
-
-    public static void unvanish(Plugin plugin, Player player) {
-        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-            if (!onlinePlayer.equals(player)) {
-                onlinePlayer.showPlayer(plugin, player);
-            }
-        }
-    }
 }

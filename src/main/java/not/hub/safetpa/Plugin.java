@@ -125,22 +125,26 @@ public final class Plugin extends JavaPlugin {
     public void executeTPMove(Player tpTarget, Player tpRequester) {
         Log.info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        // TODO: use https://github.com/LeonMangler/SuperVanish api instead
-        Players.vanish(this, tpRequester);
+        de.myzelyam.api.vanish.VanishAPI.hidePlayer(tpRequester);
+
+        // TODO: Write flag to player nbt in case some exploit prevents
+        //  the unvanish, so we can do the unvanish on the next login.
 
         // execute teleport
-        PaperLib.teleportAsync(tpRequester, tpTarget.getLocation()).thenAccept(result -> {
-            if (result) {
-                tpTarget.sendMessage(tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + " teleported to you!");
-                tpRequester.sendMessage(ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
-            } else {
-                tpTarget.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
-                tpRequester.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
-            }
-        }).thenAccept(ignored -> {
-            // Unvanish requester after n ticks
-            getServer().getScheduler().scheduleSyncDelayedTask(this, () -> Players.unvanish(this, tpRequester), Config.unvanishDelayTicks());
-        });
+        PaperLib.teleportAsync(tpRequester, tpTarget.getLocation())
+            .thenAccept(result -> {
+                if (result) {
+                    tpTarget.sendMessage(tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + " teleported to you!");
+                    tpRequester.sendMessage(ChatColor.GOLD + "Teleported to " + ChatColor.RESET + tpTarget.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
+                } else {
+                    tpTarget.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
+                    tpRequester.sendMessage(ChatColor.RED + "Teleport failed, you should harass your admin because of this!");
+                }
+            })
+            .thenAccept(ignored -> {
+                // Unvanish requester after n ticks
+                getServer().getScheduler().scheduleSyncDelayedTask(this, () -> de.myzelyam.api.vanish.VanishAPI.showPlayer(tpRequester), Config.unvanishDelayTicks());
+            });
     }
 
     public boolean isRequestBlock(Player player) {
