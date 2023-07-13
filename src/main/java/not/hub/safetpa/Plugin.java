@@ -10,6 +10,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -148,6 +149,14 @@ public final class Plugin extends JavaPlugin {
 
         // TODO: Write flag to player nbt in case some exploit prevents
         //  the unvanish, so we can do the unvanish on the next login.
+
+        var leashed = tpRequester.getWorld()
+            .getNearbyEntities(tpRequester.getLocation(), 16, 16, 16).stream()
+            .filter(e -> e instanceof LivingEntity)
+            .map(e -> (LivingEntity) e)
+            .filter(LivingEntity::isLeashed)
+            .filter(e -> e.getLeashHolder().getUniqueId().equals(tpRequester.getUniqueId()));
+        // TODO: config switch for interdimensional leashed teleport?
 
         // execute teleport
         PaperLib.teleportAsync(tpRequester, tpTarget.getLocation())
