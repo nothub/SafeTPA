@@ -1,5 +1,6 @@
 package not.hub.safetpa;
 
+import not.hub.safetpa.util.Paths;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.nio.file.Path;

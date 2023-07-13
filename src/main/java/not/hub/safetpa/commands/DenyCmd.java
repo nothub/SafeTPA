@@ -1,6 +1,6 @@
 package not.hub.safetpa.commands;
 
-import not.hub.safetpa.Players;
+import not.hub.safetpa.util.Players;
 import not.hub.safetpa.Plugin;
 import not.hub.safetpa.RequestManager;
 import org.bukkit.ChatColor;

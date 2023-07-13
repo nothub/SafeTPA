@@ -1,4 +1,4 @@
-package not.hub.safetpa;
+package not.hub.safetpa.util;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;

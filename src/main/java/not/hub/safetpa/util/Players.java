@@ -1,5 +1,6 @@
-package not.hub.safetpa;
+package not.hub.safetpa.util;
 
+import not.hub.safetpa.Config;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
