@@ -23,6 +23,8 @@ public final class Config {
         config.addDefault("distance-limit-radius", 10000);
         config.addDefault("tp-delay-seconds", 0);
         config.addDefault("movement-check", false);
+        config.addDefault("include-leashed", true);
+        config.addDefault("include-leashed-interdimensional", false);
         config.addDefault("ignores-path", Ignores.defaultPath.apply(plugin));
         config.addDefault("debug", false);
         config.options().copyDefaults(true);
@@ -66,6 +68,10 @@ public final class Config {
         tpDelaySeconds = config.getInt("tp-delay-seconds");
 
         movementCheck = config.getBoolean("movement-check");
+
+        includeLeashed = config.getBoolean("include-leashed");
+
+        includeLeashedInterdimensional = config.getBoolean("include-leashed-interdimensional");
 
         if (config.getString("ignores-path") == null || config.getString("ignores-path").isBlank()) {
             config.set("ignores-path", Ignores.defaultPath.apply(plugin));
@@ -135,6 +141,18 @@ public final class Config {
     public static boolean movementCheck() {
         assertInitialized();
         return movementCheck;
+    }
+
+    private static boolean includeLeashed;
+    public static boolean includeLeashed() {
+        assertInitialized();
+        return includeLeashed;
+    }
+
+    private static boolean includeLeashedInterdimensional;
+    public static boolean includeLeashedInterdimensional() {
+        assertInitialized();
+        return includeLeashedInterdimensional;
     }
 
     private static Path ignoresPath;

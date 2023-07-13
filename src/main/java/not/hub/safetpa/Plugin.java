@@ -150,13 +150,19 @@ public final class Plugin extends JavaPlugin {
         // TODO: Write flag to player nbt in case some exploit prevents
         //  the unvanish, so we can do the unvanish on the next login.
 
-        var leashed = tpRequester.getWorld()
-            .getNearbyEntities(tpRequester.getLocation(), 16, 16, 16).stream()
-            .filter(e -> e instanceof LivingEntity)
-            .map(e -> (LivingEntity) e)
-            .filter(LivingEntity::isLeashed)
-            .filter(e -> e.getLeashHolder().getUniqueId().equals(tpRequester.getUniqueId()));
-        // TODO: config switch for interdimensional leashed teleport?
+        if (Config.includeLeashed()) {
+            tpRequester.getWorld()
+                .getNearbyEntities(tpRequester.getLocation(), 16, 16, 16).stream()
+                .filter(e -> e instanceof LivingEntity)
+                .map(e -> (LivingEntity) e)
+                .filter(LivingEntity::isLeashed)
+                .filter(e -> e.getLeashHolder().getUniqueId().equals(tpRequester.getUniqueId()))
+                .filter(e -> {
+                    // TODO: implement check for interdimensional leashed teleport
+                    return true;
+                })
+                .forEach(entity -> PaperLib.teleportAsync(entity, tpTarget.getLocation()));
+        }
 
         // execute teleport
         PaperLib.teleportAsync(tpRequester, tpTarget.getLocation())
