@@ -6,13 +6,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import not.hub.safetpa.commands.*;
-import not.hub.safetpa.listeners.MoveListener;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +64,14 @@ public final class Plugin extends JavaPlugin {
             }
         }
 
-        getServer().getPluginManager().registerEvents(new MoveListener(this), this);
+        getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPlayerMove(PlayerMoveEvent event) {
+                if (!Config.movementCheck()) return;
+                if (!event.hasChangedPosition()) return;
+                RequestManager.cancelRequestsByRequester(event.getPlayer());
+            }
+        }, this);
 
         getServer().getScheduler().runTaskTimer(this, this::clearOldRequests, 20, 20);
     }
@@ -121,15 +129,13 @@ public final class Plugin extends JavaPlugin {
                     .append(Component.text(tpDelay))
                     .append(Component.text(" seconds...", NamedTextColor.GOLD)));
 
-            int taskId = getServer().getScheduler().scheduleSyncDelayedTask(this, () ->
-                executeTPMove(tpTarget, tpRequester), tpDelay * 20L);
+            int taskId = getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+                if (RequestManager.isRequestActive(tpTarget, tpRequester)) executeTPMove(tpTarget, tpRequester);
+            }, tpDelay * 20L);
 
             if (taskId == -1) {
                 // TODO: handle error case: scheduling failed
             }
-
-            // TODO: stop storing this in playerdata, we can just look up requests with the players uuid
-            tpRequester.setMetadata("safetpa-tpid", new FixedMetadataValue(this, taskId));
         } else {
             executeTPMove(tpTarget, tpRequester);
         }

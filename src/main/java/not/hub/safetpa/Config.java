@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.nio.file.Path;
 
 public final class Config {
-    private static boolean initialized = false;
+    private static volatile boolean initialized = false;
     private static synchronized void assertInitialized() {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
     }
@@ -22,6 +22,7 @@ public final class Config {
         config.addDefault("distance-limit", false);
         config.addDefault("distance-limit-radius", 10000);
         config.addDefault("tp-delay-seconds", 0);
+        config.addDefault("movement-check", false);
         config.addDefault("ignores-path", Ignores.defaultPath.apply(plugin));
         config.addDefault("debug", false);
         config.options().copyDefaults(true);
@@ -63,6 +64,8 @@ public final class Config {
             plugin.saveConfig();
         }
         tpDelaySeconds = config.getInt("tp-delay-seconds");
+
+        movementCheck = config.getBoolean("movement-check");
 
         if (config.getString("ignores-path") == null || config.getString("ignores-path").isBlank()) {
             config.set("ignores-path", Ignores.defaultPath.apply(plugin));
@@ -126,6 +129,12 @@ public final class Config {
     public static int tpDelaySeconds() {
         assertInitialized();
         return tpDelaySeconds;
+    }
+
+    private static boolean movementCheck;
+    public static boolean movementCheck() {
+        assertInitialized();
+        return movementCheck;
     }
 
     private static Path ignoresPath;

@@ -21,7 +21,7 @@ public class ToggleCmd extends TpCommand {
             commandSender.sendMessage(ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
         } else {
             plugin.getConfig().set(BLOCKED_PREFIX + commandSender.getUniqueId(), true);
-            RequestManager.removeRequestsByTarget(commandSender);
+            RequestManager.cancelRequestsByTarget(commandSender);
             commandSender.sendMessage(ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
         }
         plugin.saveConfig();

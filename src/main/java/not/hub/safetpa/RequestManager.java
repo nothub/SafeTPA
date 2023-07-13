@@ -41,18 +41,20 @@ public class RequestManager {
         }
     }
 
-    public static void removeRequestsByTarget(Player target) {
+    public static void cancelRequestsByTarget(Player target) {
         for (Request request : pendingRequests.keySet()) {
             if (request.target().uuid().equals(target.getUniqueId())) {
                 pendingRequests.remove(request);
+                // TODO: cancel info message
             }
         }
     }
 
-    public static void removeRequestsByRequester(Player requester) {
+    public static void cancelRequestsByRequester(Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 pendingRequests.remove(request);
+                // TODO: cancel info message
             }
         }
     }
@@ -83,15 +85,6 @@ public class RequestManager {
             }
         }
         return false;
-    }
-
-    public static Optional<Request> getRequestByRequester(Player requester) {
-        for (Request request : pendingRequests.keySet()) {
-            if (request.requester().uuid().equals(requester.getUniqueId())) {
-                return Optional.of(request);
-            }
-        }
-        return Optional.empty();
     }
 
 }
