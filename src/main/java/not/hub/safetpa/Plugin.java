@@ -1,5 +1,6 @@
 package not.hub.safetpa;
 
+import de.myzelyam.api.vanish.VanishAPI;
 import io.papermc.lib.PaperLib;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class Plugin extends JavaPlugin {
@@ -30,6 +32,8 @@ public final class Plugin extends JavaPlugin {
     }
 
     Map<String, TpCommand> commands = new HashMap<>();
+
+    private final Predicate<org.bukkit.Server> superVanishLoaded = (server) -> server.getPluginManager().isPluginEnabled("SuperVanish") || server.getPluginManager().isPluginEnabled("PremiumVanish");
 
     public Set<PluginCommand> getPluginCommands() {
         return getServer()
@@ -125,7 +129,7 @@ public final class Plugin extends JavaPlugin {
     public void executeTPMove(Player tpTarget, Player tpRequester) {
         Log.info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        de.myzelyam.api.vanish.VanishAPI.hidePlayer(tpRequester);
+        if (superVanishLoaded.test(getServer())) VanishAPI.hidePlayer(tpRequester);
 
         // TODO: Write flag to player nbt in case some exploit prevents
         //  the unvanish, so we can do the unvanish on the next login.
@@ -143,11 +147,14 @@ public final class Plugin extends JavaPlugin {
             })
             .thenAccept(ignored -> {
                 // Unvanish requester after n ticks
-                getServer().getScheduler().scheduleSyncDelayedTask(this, () -> de.myzelyam.api.vanish.VanishAPI.showPlayer(tpRequester), Config.unvanishDelayTicks());
+                getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+                    if (superVanishLoaded.test(getServer())) VanishAPI.showPlayer(tpRequester);
+                }, Config.unvanishDelayTicks());
             });
     }
 
     public boolean isRequestBlock(Player player) {
+        // TODO: stop doing this, use player metadata or sqlite instead
         return getConfig().getBoolean(BLOCKED_PREFIX + player.getUniqueId());
     }
 
