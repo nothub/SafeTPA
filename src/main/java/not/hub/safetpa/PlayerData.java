@@ -1,4 +1,4 @@
-package not.hub.safetpa.util;
+package not.hub.safetpa;
 
 import org.bukkit.entity.Player;
 

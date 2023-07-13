@@ -17,10 +17,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public final class Ignores {
-    private Ignores() {
-        throw new java.lang.UnsupportedOperationException(Ignores.class.getCanonicalName() + " is a utility class and cannot be instantiated!");
-    }
-
     private static final Gson gson = new GsonBuilder().create();
     private static final Type type = TypeToken.getParameterized(Set.class, UUID.class).getType();
 

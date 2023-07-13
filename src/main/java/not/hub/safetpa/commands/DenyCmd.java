@@ -1,7 +1,8 @@
 package not.hub.safetpa.commands;
 
+import not.hub.safetpa.Players;
 import not.hub.safetpa.Plugin;
-import not.hub.safetpa.util.Players;
+import not.hub.safetpa.RequestManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public class DenyCmd extends TpCommand {
             return false;
         }
 
-        if (!plugin.requestManager().isRequestActive(tpTarget, tpRequester)) {
+        if (!RequestManager.isRequestActive(tpTarget, tpRequester)) {
             tpTarget.sendMessage(ChatColor.GOLD + "There is no request to deny from " + ChatColor.RESET + tpRequester.getName() + ChatColor.GOLD + "!");
             return false;
         }
@@ -29,7 +30,7 @@ public class DenyCmd extends TpCommand {
         tpRequester.sendMessage(ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.getName() + ChatColor.RESET + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
 
         // TODO: wrap this method in a "deny" call
-        plugin.requestManager().removeRequests(tpTarget, tpRequester);
+        RequestManager.removeRequests(tpTarget, tpRequester);
 
         return true;
     }

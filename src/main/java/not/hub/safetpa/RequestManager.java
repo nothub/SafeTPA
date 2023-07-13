@@ -9,10 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestManager {
+    private static final Map<Request, Long> pendingRequests = new ConcurrentHashMap<>();
 
-    private final Map<Request, Long> pendingRequests = new ConcurrentHashMap<>();
-
-    void clearOldRequests(int timeoutValue) {
+    static void clearOldRequests(int timeoutValue) {
         long time = System.currentTimeMillis();
         pendingRequests.forEach((request, requestTime) -> {
             if (((time - requestTime) / 1000L) > timeoutValue) {
@@ -29,12 +28,12 @@ public class RequestManager {
         });
     }
 
-    public void addRequest(Player target, Player requester) {
+    public static void addRequest(Player target, Player requester) {
         removeRequests(target, requester);
         pendingRequests.put(Request.of(target, requester), System.currentTimeMillis());
     }
 
-    public void removeRequests(Player target, Player requester) {
+    public static void removeRequests(Player target, Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
                 pendingRequests.remove(request);
@@ -42,7 +41,7 @@ public class RequestManager {
         }
     }
 
-    public void removeRequestsByTarget(Player target) {
+    public static void removeRequestsByTarget(Player target) {
         for (Request request : pendingRequests.keySet()) {
             if (request.target().uuid().equals(target.getUniqueId())) {
                 pendingRequests.remove(request);
@@ -50,7 +49,7 @@ public class RequestManager {
         }
     }
 
-    public void removeRequestsByRequester(Player requester) {
+    public static void removeRequestsByRequester(Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 pendingRequests.remove(request);
@@ -58,7 +57,7 @@ public class RequestManager {
         }
     }
 
-    public boolean isRequestActive(Player target, Player requester) {
+    public static boolean isRequestActive(Player target, Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.isSamePlayers(target, requester)) {
                 return true;
@@ -68,7 +67,7 @@ public class RequestManager {
         return false;
     }
 
-    boolean isRequestActiveByTarget(Player target) {
+    public static boolean isRequestActiveByTarget(Player target) {
         for (Request request : pendingRequests.keySet()) {
             if (request.target().uuid().equals(target.getUniqueId())) {
                 return true;
@@ -77,7 +76,7 @@ public class RequestManager {
         return false;
     }
 
-    public boolean isRequestActiveByRequester(Player requester) {
+    public static boolean isRequestActiveByRequester(Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 return true;
@@ -86,7 +85,7 @@ public class RequestManager {
         return false;
     }
 
-    public Optional<Request> getRequestByRequester(Player requester) {
+    public static Optional<Request> getRequestByRequester(Player requester) {
         for (Request request : pendingRequests.keySet()) {
             if (request.requester().uuid().equals(requester.getUniqueId())) {
                 return Optional.of(request);

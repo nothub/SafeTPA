@@ -4,8 +4,6 @@ import de.myzelyam.api.vanish.VanishAPI;
 import io.papermc.lib.PaperLib;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
-import not.hub.safetpa.util.Players;
-import not.hub.safetpa.util.Log;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,16 +22,10 @@ import java.util.stream.Collectors;
 
 public final class Plugin extends JavaPlugin {
     public static final String BLOCKED_PREFIX = "requests-blocked-";
-
-    private final RequestManager requestManager = new RequestManager();
-
-    public RequestManager requestManager() {
-        return requestManager;
-    }
-
-    Map<String, TpCommand> commands = new HashMap<>();
-
-    private final Predicate<org.bukkit.Server> superVanishLoaded = (server) -> server.getPluginManager().isPluginEnabled("SuperVanish") || server.getPluginManager().isPluginEnabled("PremiumVanish");
+    private static final Predicate<org.bukkit.Server> superVanishLoaded = (server) ->
+        server.getPluginManager().isPluginEnabled("SuperVanish") ||
+            server.getPluginManager().isPluginEnabled("PremiumVanish");
+    private final Map<String, TpCommand> commands = new HashMap<>();
 
     public Set<PluginCommand> getPluginCommands() {
         return getServer()
@@ -65,7 +57,7 @@ public final class Plugin extends JavaPlugin {
                 case "tpn" -> commands.put("tpn", new DenyCmd(this, cmd));
                 case "tpt" -> commands.put("tpt", new ToggleCmd(this, cmd));
                 case "tpi" -> commands.put("tpi", new IgnoreCmd(this, cmd));
-                default -> throw new IllegalStateException("Unknown command: " + cmd.getLabel() + " " + cmd.getAliases());
+                default -> throw new IllegalStateException("Unknown command: " + cmd.getLabel());
             }
         }
 
@@ -98,7 +90,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     public void clearOldRequests() {
-        requestManager.clearOldRequests(Config.requestTimeoutSeconds());
+        RequestManager.clearOldRequests(Config.requestTimeoutSeconds());
     }
 
     public void executeTP(Player tpTarget, Player tpRequester) {

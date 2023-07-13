@@ -1,6 +1,5 @@
 package not.hub.safetpa;
 
-import not.hub.safetpa.util.PlayerData;
 import org.bukkit.entity.Player;
 
 public record Request(PlayerData target, PlayerData requester) {

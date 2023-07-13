@@ -1,15 +1,10 @@
 package not.hub.safetpa;
 
-import not.hub.safetpa.util.Paths;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.nio.file.Path;
 
 public final class Config {
-    private Config() {
-        throw new java.lang.UnsupportedOperationException(Config.class.getCanonicalName() + " is a utility class and cannot be instantiated!");
-    }
-
     private static boolean initialized = false;
     private static synchronized void assertInitialized() {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");

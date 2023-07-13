@@ -1,10 +1,6 @@
 package not.hub.safetpa.commands;
 
-import not.hub.safetpa.Config;
-import not.hub.safetpa.Ignores;
-import not.hub.safetpa.Plugin;
-import not.hub.safetpa.util.Log;
-import not.hub.safetpa.util.Players;
+import not.hub.safetpa.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -45,12 +41,12 @@ public class AskCmd extends TpCommand {
             return false;
         }
 
-        if (plugin.requestManager().isRequestActive(target, commandSender)) {
+        if (RequestManager.isRequestActive(target, commandSender)) {
             commandSender.sendMessage(ChatColor.GOLD + "Please wait for " + ChatColor.RESET + target.getName() + ChatColor.RESET + ChatColor.GOLD + " to accept or deny your request.");
             return false;
         }
 
-        if (!Config.allowMultiTargetRequest() && plugin.requestManager().isRequestActiveByRequester(commandSender)) {
+        if (!Config.allowMultiTargetRequest() && RequestManager.isRequestActiveByRequester(commandSender)) {
             commandSender.sendMessage(ChatColor.GOLD + "Please wait for your existing request to be accepted or denied.");
             return false;
         }
@@ -59,7 +55,7 @@ public class AskCmd extends TpCommand {
         target.sendMessage(commandSender.getName() + "" + ChatColor.GOLD + " wants to teleport to you.");
         target.sendMessage(ChatColor.GOLD + "Type " + ChatColor.RESET + "/tpy " + commandSender.getName() + ChatColor.RESET + ChatColor.GOLD + " to accept or " + ChatColor.RESET + "/tpn " + commandSender.getName() + ChatColor.GOLD + " to deny.");
 
-        plugin.requestManager().addRequest(target, commandSender);
+        RequestManager.addRequest(target, commandSender);
 
         return true;
     }

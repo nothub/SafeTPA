@@ -1,6 +1,7 @@
 package not.hub.safetpa.listeners;
 
 import not.hub.safetpa.Plugin;
+import not.hub.safetpa.RequestManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,13 +29,13 @@ public class MoveListener implements Listener {
                 scheduler.cancelTask(taskId);
 
                 event.getPlayer().sendMessage(ChatColor.RED + "Teleport failed!");
-                plugin.requestManager().getRequestByRequester(event.getPlayer()).ifPresent(request -> {
+                RequestManager.getRequestByRequester(event.getPlayer()).ifPresent(request -> {
                     Player target = plugin.getServer().getPlayer(request.target().uuid());
                     if (target != null) {
                         target.sendMessage(ChatColor.GOLD + "Teleport failed!");
                     }
                 });
-                plugin.requestManager().removeRequestsByRequester(event.getPlayer());
+                RequestManager.removeRequestsByRequester(event.getPlayer());
             }
         });
         event.getPlayer().removeMetadata("safetpa-tpid", plugin);

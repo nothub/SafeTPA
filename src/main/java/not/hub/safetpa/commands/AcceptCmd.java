@@ -1,7 +1,8 @@
 package not.hub.safetpa.commands;
 
+import not.hub.safetpa.Players;
 import not.hub.safetpa.Plugin;
-import not.hub.safetpa.util.Players;
+import not.hub.safetpa.RequestManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public class AcceptCmd extends TpCommand {
             return false;
         }
 
-        if (!plugin.requestManager().isRequestActive(tpTarget, tpRequester)) {
+        if (!RequestManager.isRequestActive(tpTarget, tpRequester)) {
             tpTarget.sendMessage(ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
             return false;
         }
@@ -30,7 +31,7 @@ public class AcceptCmd extends TpCommand {
 
         // TODO: combine these 2 methods to a single "accept" call
         plugin.executeTP(tpTarget, tpRequester);
-        plugin.requestManager().removeRequests(tpTarget, tpRequester);
+        RequestManager.removeRequests(tpTarget, tpRequester);
 
         return true;
     }

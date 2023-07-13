@@ -1,6 +1,7 @@
 package not.hub.safetpa.commands;
 
 import not.hub.safetpa.Plugin;
+import not.hub.safetpa.RequestManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public class ToggleCmd extends TpCommand {
             commandSender.sendMessage(ChatColor.GOLD + "Request are now " + ChatColor.GREEN + " enabled" + ChatColor.GOLD + "!");
         } else {
             plugin.getConfig().set(BLOCKED_PREFIX + commandSender.getUniqueId(), true);
-            plugin.requestManager().removeRequestsByTarget(commandSender);
+            RequestManager.removeRequestsByTarget(commandSender);
             commandSender.sendMessage(ChatColor.GOLD + "Request are now " + ChatColor.RED + " disabled" + ChatColor.GOLD + "!");
         }
         plugin.saveConfig();
