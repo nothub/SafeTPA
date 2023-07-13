@@ -3,6 +3,7 @@ package not.hub.safetpa.commands;
 import not.hub.safetpa.Config;
 import not.hub.safetpa.Ignores;
 import not.hub.safetpa.Plugin;
+import not.hub.safetpa.util.Log;
 import not.hub.safetpa.util.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
@@ -27,7 +28,7 @@ public class AskCmd extends TpCommand {
         }
 
         if (Config.spawnTpDeny() && Players.isAtSpawn(commandSender)) {
-            plugin.getLogger().info("Denying teleport request while in spawn area from " + commandSender.getName() + " to " + target.getName());
+            Log.info("Denying teleport request while in spawn area from " + commandSender.getName() + " to " + target.getName());
             commandSender.sendMessage(ChatColor.GOLD + "You are not allowed to teleport while in the spawn area!");
             return false;
         }
@@ -39,7 +40,7 @@ public class AskCmd extends TpCommand {
 
         if (Config.distanceLimit() &&
             Players.getOverworldXzVector(commandSender).distance(Players.getOverworldXzVector(target)) > Config.distanceLimitRadius()) {
-            plugin.getLogger().info("Denying teleport request while out of range from " + commandSender.getName() + " to " + target.getName());
+            Log.info("Denying teleport request while out of range from " + commandSender.getName() + " to " + target.getName());
             commandSender.sendMessage(ChatColor.GOLD + "You are too far away from " + ChatColor.RESET + target.getName() + ChatColor.RESET + ChatColor.GOLD + " to teleport!");
             return false;
         }

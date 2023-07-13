@@ -4,6 +4,7 @@ import io.papermc.lib.PaperLib;
 import not.hub.safetpa.commands.*;
 import not.hub.safetpa.listeners.MoveListener;
 import not.hub.safetpa.util.Players;
+import not.hub.safetpa.util.Log;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -45,6 +46,8 @@ public final class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Log.set(getLogger());
+
         PaperLib.suggestPaper(this);
 
         new Metrics(this, 11798);
@@ -70,12 +73,12 @@ public final class Plugin extends JavaPlugin {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String commandLabel, String[] args) {
         if (!(commandSender instanceof Player sender)) {
-            getLogger().warning("Ignoring command executed by non-player sender: " + commandSender.getName());
+            Log.warn("Ignoring command executed by non-player sender: " + commandSender.getName());
             return false;
         }
 
         if (!commands.containsKey(commandLabel)) {
-            getLogger().warning("Unknown command: " + commandLabel);
+            Log.warn("Unknown command: " + commandLabel);
             return false;
         }
 
@@ -120,7 +123,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     public void executeTPMove(Player tpTarget, Player tpRequester) {
-        getLogger().info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
+        Log.info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
         // TODO: use https://github.com/LeonMangler/SuperVanish api instead
         Players.vanish(this, tpRequester);
