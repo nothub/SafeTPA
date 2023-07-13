@@ -77,9 +77,15 @@ public class AskCmd extends TpCommand {
                 )
                 .append(Component.text(" or ", NamedTextColor.GOLD))
                 .append(
-                    Component.text("[DECLINE]", NamedTextColor.RED)
+                    Component.text("[DENY]", NamedTextColor.RED)
                         .hoverEvent(Component.text("Deny the teleport").asHoverEvent())
                         .clickEvent(ClickEvent.suggestCommand("/tpn " + commandSender.getName()))
+                )
+                .append(Component.text(" or ", NamedTextColor.GOLD))
+                .append(
+                    Component.text("[IGNORE]", NamedTextColor.GRAY)
+                        .hoverEvent(Component.text("Ignore the requester").asHoverEvent())
+                        .clickEvent(ClickEvent.suggestCommand("/tpi " + commandSender.getName()))
                 )
         );
 
