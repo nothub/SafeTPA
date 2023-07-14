@@ -217,19 +217,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>convenience/server-setup.py</executable>
-                  <arguments>
-                    <argument>--fork</argument>
-                    <argument>paper</argument>
-                    <argument>--mc-version</argument>
-                    <argument>${minecraft.version}</argument>
-                    <argument>--server-dir</argument>
-                    <argument>server</argument>
-                    <argument>--link-name</argument>
-                    <argument>server.jar</argument>
-                    <argument>--copy-plugins</argument>
-                    <argument>target/${project.artifactId}-*.jar</argument>
-                  </arguments>
+                  <executable>./server-setup.sh</executable>
                   <environmentVariables>
                     <!-- Set MC_EULA to agree with Mojangs EULA: https://account.mojang.com/documents/minecraft_eula
                     <MC_EULA>true</MC_EULA> -->
@@ -246,31 +234,31 @@
                   <workingDirectory>server</workingDirectory>
                   <executable>java</executable>
                   <arguments>
-                    <argument>-Xms2G</argument>
-                    <argument>-Xmx2G</argument>
+                    <argument>-Xms4G</argument>
+                    <argument>-Xmx4G</argument>
                     <argument>-XX:+UseG1GC</argument>
                     <argument>-XX:+ParallelRefProcEnabled</argument>
                     <argument>-XX:MaxGCPauseMillis=200</argument>
                     <argument>-XX:+UnlockExperimentalVMOptions</argument>
                     <argument>-XX:+DisableExplicitGC</argument>
                     <argument>-XX:+AlwaysPreTouch</argument>
+                    <argument>-XX:G1NewSizePercent=30</argument>
+                    <argument>-XX:G1MaxNewSizePercent=40</argument>
+                    <argument>-XX:G1HeapRegionSize=8M</argument>
+                    <argument>-XX:G1ReservePercent=20</argument>
                     <argument>-XX:G1HeapWastePercent=5</argument>
                     <argument>-XX:G1MixedGCCountTarget=4</argument>
+                    <argument>-XX:InitiatingHeapOccupancyPercent=15</argument>
                     <argument>-XX:G1MixedGCLiveThresholdPercent=90</argument>
                     <argument>-XX:G1RSetUpdatingPauseTimePercent=5</argument>
                     <argument>-XX:SurvivorRatio=32</argument>
                     <argument>-XX:+PerfDisableSharedMem</argument>
                     <argument>-XX:MaxTenuringThreshold=1</argument>
-                    <argument>-XX:G1NewSizePercent=30</argument>
-                    <argument>-XX:G1MaxNewSizePercent=40</argument>
-                    <argument>-XX:G1HeapRegionSize=8M</argument>
-                    <argument>-XX:G1ReservePercent=20</argument>
-                    <argument>-XX:InitiatingHeapOccupancyPercent=15</argument>
                     <argument>-Dusing.aikars.flags=https://mcflags.emc.gs</argument>
                     <argument>-Daikars.new.flags=true</argument>
                     <argument>-jar</argument>
                     <argument>server.jar</argument>
-                    <argument>nogui</argument>
+                    <argument>--nogui</argument>
                   </arguments>
                 </configuration>
               </execution>
