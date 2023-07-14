@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public abstract class TpCommand {
+
     final Plugin plugin;
     public final String label;
     public final List<String> aliases;
@@ -34,4 +35,5 @@ public abstract class TpCommand {
     public void sendUsage(Player player) {
         player.sendMessage(usage);
     }
+
 }

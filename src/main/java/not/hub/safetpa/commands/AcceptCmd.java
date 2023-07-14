@@ -1,9 +1,10 @@
 package not.hub.safetpa.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import not.hub.safetpa.util.Players;
 import not.hub.safetpa.Plugin;
 import not.hub.safetpa.RequestManager;
-import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 
@@ -17,17 +18,35 @@ public class AcceptCmd extends TpCommand {
     public boolean run(Player tpTarget, String requesterName) {
         var tpRequester = Players.getOnlinePlayer(plugin.getServer(), requesterName);
         if (tpRequester == null) {
-            tpTarget.sendMessage(ChatColor.GOLD + "Player " + ChatColor.RESET + requesterName + ChatColor.GOLD + " is not online.");
+            tpTarget.sendMessage(
+                Component.text("Player ", NamedTextColor.GOLD)
+                    .append(Component.text(requesterName))
+                    .append(Component.text(" is not online.", NamedTextColor.GOLD))
+            );
             return false;
         }
 
         if (!RequestManager.isRequestActive(tpTarget, tpRequester)) {
-            tpTarget.sendMessage(ChatColor.GOLD + "There is no request to accept from " + ChatColor.RESET + tpRequester.getName() + ChatColor.RESET + ChatColor.GOLD + "!");
+            tpTarget.sendMessage(
+                Component.text("There is no request to accept from ", NamedTextColor.GOLD)
+                    .append(Component.text(tpRequester.getName()))
+                    .append(Component.text("!", NamedTextColor.GOLD))
+            );
             return false;
         }
 
-        tpTarget.sendMessage(ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getName() + ChatColor.RESET + ChatColor.GREEN + " accepted" + ChatColor.GOLD + "!");
-        tpRequester.sendMessage(ChatColor.GOLD + "Your request was " + ChatColor.GREEN + "accepted" + ChatColor.GOLD + ", teleporting to: " + ChatColor.RESET + tpTarget.getName());
+        tpTarget.sendMessage(
+            Component.text("Request from ", NamedTextColor.GOLD)
+                .append(Component.text(tpRequester.getName()))
+                .append(Component.text(" accepted", NamedTextColor.GREEN))
+                .append(Component.text("!", NamedTextColor.GOLD))
+        );
+        tpRequester.sendMessage(
+            Component.text("Your request was ", NamedTextColor.GOLD)
+                .append(Component.text("accepted", NamedTextColor.GREEN))
+                .append(Component.text(", teleporting to: ", NamedTextColor.GOLD))
+                .append(Component.text(tpTarget.getName()))
+        );
 
         // TODO: combine these 2 methods to a single "accept" call
         plugin.executeTP(tpTarget, tpRequester);

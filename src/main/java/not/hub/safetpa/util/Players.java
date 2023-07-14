@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class Players {
+
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]{1,16}$");
 
     public static boolean validName(String name) {

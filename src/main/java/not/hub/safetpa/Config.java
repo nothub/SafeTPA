@@ -6,7 +6,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.nio.file.Path;
 
 public final class Config {
+
     private static volatile boolean initialized = false;
+
     private static synchronized void assertInitialized() {
         if (!initialized) throw new IllegalStateException("Config access prior to initialization!");
     }
