@@ -65,7 +65,6 @@ public class RequestManager {
                 return true;
             }
         }
-
         return false;
     }
 

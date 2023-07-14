@@ -7,6 +7,10 @@ import java.util.logging.Logger;
 public class Log {
     private static volatile @NotNull Logger logger = Logger.getAnonymousLogger();
 
+    public static void debug(String msg) {
+        if (Config.debug()) logger.fine(msg);
+    }
+
     public static void info(String msg) {
         logger.info(msg);
     }
