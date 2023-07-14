@@ -219,8 +219,11 @@
                 <configuration>
                   <executable>./server-setup.sh</executable>
                   <environmentVariables>
-                    <!-- Set MC_EULA to agree with Mojangs EULA: https://account.mojang.com/documents/minecraft_eula
-                    <MC_EULA>true</MC_EULA> -->
+                    <!-- Set MC_EULA to agree with Mojangs EULA:
+                    https://account.mojang.com/documents/minecraft_eula -->
+                    <!--
+                    <MC_EULA>true</MC_EULA>
+                    -->
                   </environmentVariables>
                 </configuration>
               </execution>
