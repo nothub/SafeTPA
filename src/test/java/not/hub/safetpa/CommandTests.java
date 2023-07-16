@@ -24,6 +24,7 @@ public class CommandTests {
 
     @Test
     void tpa() {
+        // see: https://mockbukkit.readthedocs.io/en/latest/entity_mock.html
         PlayerMock playerA = server.addPlayer("aaaaa");
         PlayerMock playerB = server.addPlayer("bbbbb");
         playerA.performCommand("/tpa bbbbb");

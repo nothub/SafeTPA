@@ -25,12 +25,17 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public final class Plugin extends JavaPlugin {
+public class Plugin extends JavaPlugin {
     public static final String BLOCKED_PREFIX = "requests-blocked-";
     private static final Predicate<org.bukkit.Server> superVanishLoaded = (server) ->
         server.getPluginManager().isPluginEnabled("SuperVanish") ||
             server.getPluginManager().isPluginEnabled("PremiumVanish");
     private final Map<String, TpCommand> commands = new HashMap<>();
+
+    private static boolean shouldTpLeashed(Entity playerA, Entity playerB) {
+        //Checks if the dimension is the same, otherwise checks if interdimensional leash tp is allowed
+        return playerA.getWorld().getEnvironment() == playerB.getWorld().getEnvironment() || Config.includeLeashedInterdimensional();
+    }
 
     public Set<PluginCommand> getPluginCommands() {
         return getServer()
@@ -49,9 +54,11 @@ public final class Plugin extends JavaPlugin {
     public void onEnable() {
         Log.set(getLogger());
 
-        PaperLib.suggestPaper(this);
-
-        new Metrics(this, 11798);
+        if (!getServer().getClass().getName().equals("be.seeseemelk.mockbukkit.ServerMock")) {
+            // skip this stuff when running tests
+            PaperLib.suggestPaper(this);
+            new Metrics(this, 11798);
+        }
 
         Config.load(this);
 
@@ -184,11 +191,6 @@ public final class Plugin extends JavaPlugin {
                     if (superVanishLoaded.test(getServer())) VanishAPI.showPlayer(tpRequester);
                 }, Config.unvanishDelayTicks());
             });
-    }
-
-    private static boolean shouldTpLeashed(Entity playerA, Entity playerB) {
-        //Checks if the dimension is the same, otherwise checks if interdimensional leash tp is allowed
-        return playerA.getWorld().getEnvironment() == playerB.getWorld().getEnvironment() || Config.includeLeashedInterdimensional();
     }
 
     public boolean isRequestBlock(Player player) {
