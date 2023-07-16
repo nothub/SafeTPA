@@ -28,9 +28,10 @@ public class CommandTests {
         PlayerMock playerA = server.addPlayer("aaaaa");
         PlayerMock playerB = server.addPlayer("bbbbb");
         playerA.performCommand("/tpa bbbbb");
-        System.out.println(playerA.nextMessage());
-        System.out.println(playerA.nextComponentMessage());
-        System.out.println(playerB.nextMessage());
-        System.out.println(playerB.nextComponentMessage());
+        playerB.performCommand("/tpy aaaaa");
+        //plugin.executeTP(playerA, playerB);
+        server.getScheduler().performTicks(10);
+        System.out.println(playerA.hasTeleported());
+        System.out.println(playerB.hasTeleported());
     }
 }

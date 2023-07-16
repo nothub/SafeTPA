@@ -1,7 +1,6 @@
 package not.hub.safetpa;
 
 import de.myzelyam.api.vanish.VanishAPI;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,6 @@ public class Plugin extends JavaPlugin {
 
         if (!getServer().getClass().getName().equals("be.seeseemelk.mockbukkit.ServerMock")) {
             // skip this stuff when running tests
-            PaperLib.suggestPaper(this);
             new Metrics(this, 11798);
         }
 
@@ -165,11 +164,11 @@ public class Plugin extends JavaPlugin {
                 .map(e -> (LivingEntity) e)
                 .filter(LivingEntity::isLeashed)
                 .filter(e -> e.getLeashHolder().getUniqueId().equals(tpRequester.getUniqueId()))
-                .forEach(entity -> PaperLib.teleportAsync(entity, tpTarget.getLocation()));
+                .forEach(entity -> entity.teleportAsync(tpTarget.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN));
         }
 
         // execute teleport
-        PaperLib.teleportAsync(tpRequester, tpTarget.getLocation())
+        tpRequester.teleportAsync(tpTarget.getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND)
             .thenAccept(result -> {
                 if (result) {
                     tpTarget.sendMessage(

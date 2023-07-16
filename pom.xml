@@ -57,12 +57,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>io.papermc</groupId>
-      <artifactId>paperlib</artifactId>
-      <version>1.0.8</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>com.comphenix.protocol</groupId>
       <artifactId>ProtocolLib</artifactId>
       <version>5.0.0</version>
