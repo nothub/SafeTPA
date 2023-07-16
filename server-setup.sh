@@ -12,15 +12,17 @@ spigot_tester_version="1.0.2-Release"
 spigot_tester_hash="3de81665bc0e7f098fc6b78d46125ab7e42ee07b534942fc32196ac0556d3863"
 plugin_jar="./target/SafeTPA-4.0.0.jar"
 
+paper_api_base="https://api.papermc.io/v2/projects/paper"
+
 if test ! -f "${server_dir}/server.jar"; then
 
     echo >&2 "downloading paper"
-    build_id="$(curl -sSLf "https://api.papermc.io/v2/projects/paper/versions/${mc_version}" | jq -r '.builds|last')"
-    file_name="$(curl -sSLf "https://api.papermc.io/v2/projects/paper/versions/${mc_version}/builds/${build_id}" |
+    build_id="$(curl -sSLf  "${paper_api_base}/versions/${mc_version}" | jq -r '.builds|last')"
+    file_name="$(curl -sSLf "${paper_api_base}/versions/${mc_version}/builds/${build_id}" |
         jq -r '.downloads.application.name')"
-    file_hash="$(curl -sSLf "https://api.papermc.io/v2/projects/paper/versions/${mc_version}/builds/${build_id}" |
+    file_hash="$(curl -sSLf "${paper_api_base}/versions/${mc_version}/builds/${build_id}" |
         jq -r '.downloads.application.sha256')"
-    file_url="https://api.papermc.io/v2/projects/paper/versions/${mc_version}/builds/${build_id}/downloads/${file_name}"
+    file_url="${paper_api_base}/versions/${mc_version}/builds/${build_id}/downloads/${file_name}"
 
     mkdir -p "${server_dir}"
     curl -sSLf -o "${server_dir}/server.jar" "${file_url}"
