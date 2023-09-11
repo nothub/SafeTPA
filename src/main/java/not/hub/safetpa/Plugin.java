@@ -91,6 +91,11 @@ public final class Plugin extends JavaPlugin {
             return true;
         }
 
+        if (command.getLabel().equalsIgnoreCase("tpn")) {
+            cancelTP(sender, getServer().getPlayer(args[0]));
+            return true;
+        }
+
         return false;
 
     }
@@ -173,6 +178,22 @@ public final class Plugin extends JavaPlugin {
 
         sendMessage(tpTarget, ChatColor.GOLD + "Request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.RESET + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
         sendMessage(tpRequester, ChatColor.GOLD + "Your request sent to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.RESET + ChatColor.GOLD + " was" + ChatColor.RED + " denied" + ChatColor.GOLD + "!");
+        requestManager.removeRequests(tpTarget, tpRequester);
+
+    }
+    private void cancelTP(Player tpTarget, Player tpRequester) {
+
+        if (tpTarget == null || tpRequester == null) {
+            return;
+        }
+
+        if (!requestManager.isRequestActive(tpRequester, tpTarget)) {
+            sendMessage(tpTarget, ChatColor.GOLD + "There is no request to cancel from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + "!");
+            return;
+        }
+
+        sendMessage(tpTarget, ChatColor.GOLD + "The request from " + ChatColor.RESET + tpRequester.getDisplayName() + ChatColor.GOLD + " was " + ChatColor.RED + "cancelled" + ChatColor.GOLD + "!");
+        sendMessage(tpRequester, ChatColor.GOLD + "Cancelled your teleport request to " + ChatColor.RESET + tpTarget.getDisplayName() + ChatColor.GOLD + "!");
         requestManager.removeRequests(tpTarget, tpRequester);
 
     }
