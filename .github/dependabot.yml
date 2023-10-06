@@ -5,20 +5,12 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "dev"
     assignees:
       - "nothub"
-    commit-message:
-      prefix: "maven"
-      include: "scope"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "dev"
     assignees:
       - "nothub"
-    commit-message:
-      prefix: "github-actions"
-      include: "scope"
