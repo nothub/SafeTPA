@@ -54,10 +54,7 @@ public class Plugin extends JavaPlugin {
     public void onEnable() {
         Log.set(getLogger());
 
-        if (!getServer().getClass().getName().equals("be.seeseemelk.mockbukkit.ServerMock")) {
-            // skip this stuff when running tests
-            new Metrics(this, 11798);
-        }
+        new Metrics(this, 11798);
 
         Config.load(this);
 
