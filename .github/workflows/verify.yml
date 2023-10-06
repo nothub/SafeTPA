@@ -20,5 +20,5 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Maven verify
-        run: mvn --batch-mode --show-version --errors verify --file pom.xml
+      - name: Run tests
+        run: make check

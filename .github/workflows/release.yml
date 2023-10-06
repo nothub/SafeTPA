@@ -20,8 +20,8 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Maven package
-        run: mvn --batch-mode --show-version --errors package --file pom.xml
+      - name: Build artifact
+        run: make build
 
       - name: Draft release
         id: create_release
