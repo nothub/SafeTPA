@@ -74,18 +74,6 @@
       <version>3.0.2</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.10.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.seeseemelk</groupId>
-      <artifactId>MockBukkit-v1.20</artifactId>
-      <version>3.24.1</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <pluginRepositories>
