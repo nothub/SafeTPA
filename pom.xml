@@ -65,7 +65,7 @@
     <dependency>
       <groupId>com.github.LeonMangler</groupId>
       <artifactId>SuperVanish</artifactId>
-      <version>8d7f3d6da5</version>
+      <version>6.2.17</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
