@@ -36,7 +36,7 @@ jobs:
           prerelease: false
 
       - name: Publish release
-        uses: csexton/release-asset-action@v2
+        uses: csexton/release-asset-action@v3
         with:
           pattern: "target/SafeTPA-*.jar"
           github-token: ${{ secrets.GITHUB_TOKEN }}
