@@ -3,7 +3,7 @@ name: "🧑‍🏭"
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   release:
