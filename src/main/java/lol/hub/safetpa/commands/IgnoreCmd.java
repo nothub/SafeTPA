@@ -1,10 +1,10 @@
-package not.hub.safetpa.commands;
+package lol.hub.safetpa.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import not.hub.safetpa.Ignores;
-import not.hub.safetpa.util.Players;
-import not.hub.safetpa.Plugin;
+import lol.hub.safetpa.Ignores;
+import lol.hub.safetpa.util.Players;
+import lol.hub.safetpa.Plugin;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 

@@ -1,14 +1,14 @@
-package not.hub.safetpa.commands;
+package lol.hub.safetpa.commands;
 
+import lol.hub.safetpa.Config;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import not.hub.safetpa.Config;
-import not.hub.safetpa.Ignores;
-import not.hub.safetpa.Log;
-import not.hub.safetpa.Plugin;
-import not.hub.safetpa.RequestManager;
-import not.hub.safetpa.util.Players;
+import lol.hub.safetpa.Ignores;
+import lol.hub.safetpa.Log;
+import lol.hub.safetpa.Plugin;
+import lol.hub.safetpa.RequestManager;
+import lol.hub.safetpa.util.Players;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 

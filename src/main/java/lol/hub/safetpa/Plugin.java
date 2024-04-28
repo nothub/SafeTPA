@@ -1,10 +1,11 @@
-package not.hub.safetpa;
+package lol.hub.safetpa;
 
 import de.myzelyam.api.vanish.VanishAPI;
+import lol.hub.safetpa.commands.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import not.hub.safetpa.commands.*;
+import lol.hub.safetpa.commands.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

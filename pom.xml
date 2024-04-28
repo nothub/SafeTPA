@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>not.hub</groupId>
+  <groupId>lol.hub</groupId>
   <artifactId>SafeTPA</artifactId>
   <version>4.0.0</version>
   <packaging>jar</packaging>
@@ -143,11 +143,11 @@
           <relocations>
             <relocation>
               <pattern>io.papermc.lib</pattern>
-              <shadedPattern>not.hub.safetpa.paperlib</shadedPattern>
+              <shadedPattern>lol.hub.safetpa.paperlib</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.bstats</pattern>
-              <shadedPattern>not.hub.safetpa.bstats</shadedPattern>
+              <shadedPattern>lol.hub.safetpa.bstats</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

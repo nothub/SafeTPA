@@ -1,6 +1,6 @@
-package not.hub.safetpa.commands;
+package lol.hub.safetpa.commands;
 
-import not.hub.safetpa.Plugin;
+import lol.hub.safetpa.Plugin;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 

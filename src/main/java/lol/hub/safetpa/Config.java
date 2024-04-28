@@ -1,6 +1,6 @@
-package not.hub.safetpa;
+package lol.hub.safetpa;
 
-import not.hub.safetpa.util.Paths;
+import lol.hub.safetpa.util.Paths;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.nio.file.Path;
