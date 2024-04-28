@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import lol.hub.safetpa.commands.*;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -54,8 +53,6 @@ public class Plugin extends JavaPlugin {
     @Override
     public void onEnable() {
         Log.set(getLogger());
-
-        new Metrics(this, 11798);
 
         Config.load(this);
 
