@@ -1,8 +1,5 @@
 # SafeTPA
 
-[![DL](https://img.shields.io/github/downloads/nothub/SafeTPA/total?label=DL&style=popout-square)](https://github.com/nothub/SafeTPA/releases/latest)
-[![LoC](https://img.shields.io/tokei/lines/github/nothub/SafeTPA?label=LoC&style=popout-square)](https://github.com/nothub/SafeTPA)
-
 Minecraft self-service teleport requests
 
 ---
