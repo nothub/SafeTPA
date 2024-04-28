@@ -1,0 +1,45 @@
+name: '🧑‍🏭'
+on: [ push, pull_request ]
+permissions:
+  contents: write
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gradle/actions/wrapper-validation@v3
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          check-latest: true
+          cache: 'gradle'
+
+      - run: ./gradlew --console plain --no-daemon --full-stacktrace check build
+
+      - name: 'Find Minecraft version'
+        run: echo "MINECRAFT_VERSION=$(cat gradle.properties | grep -oP 'minecraft_version=(\K[0-9\.]+)')" >> $GITHUB_ENV
+
+      - name: 'Find Minecraft API version'
+        run: echo "MC_API_VERSION=$(cat src/main/resources/plugin.yml | yq -r ".[\"api-version\"]")" >> $GITHUB_ENV
+
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: '${{ github.ref_name }} (${{ env.MINECRAFT_VERSION }})'
+          body: 'Release generated at commit: ${{ github.sha }}'
+          files: 'build/dist/*.jar'
+
+      - uses: Kir-Antipov/mc-publish@v3
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          modrinth-id: 'xO8vZmww'
+          modrinth-token: '${{ secrets.MODRINTH_TOKEN }}'
+          files: 'build/dist/*.jar'
+          loaders: 'paper'
+          game-versions: '${{ env.MC_API_VERSION }}.x'
