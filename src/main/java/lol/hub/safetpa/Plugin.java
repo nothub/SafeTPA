@@ -1,11 +1,9 @@
 package lol.hub.safetpa;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import lol.hub.safetpa.commands.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import lol.hub.safetpa.commands.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -22,14 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Plugin extends JavaPlugin {
     public static final String BLOCKED_PREFIX = "requests-blocked-";
-    private static final Predicate<org.bukkit.Server> superVanishLoaded = (server) ->
-        server.getPluginManager().isPluginEnabled("SuperVanish") ||
-            server.getPluginManager().isPluginEnabled("PremiumVanish");
     private final Map<String, TpCommand> commands = new HashMap<>();
 
     private static boolean shouldTpLeashed(Entity playerA, Entity playerB) {
@@ -147,8 +141,6 @@ public class Plugin extends JavaPlugin {
     public void executeTPMove(Player tpTarget, Player tpRequester) {
         Log.info("Teleporting " + tpRequester.getName() + " to " + tpTarget.getName());
 
-        if (superVanishLoaded.test(getServer())) VanishAPI.hidePlayer(tpRequester);
-
         // TODO: Write flag to player nbt in case some exploit prevents
         //  the unvanish, so we can do the unvanish on the next login.
 
@@ -180,9 +172,8 @@ public class Plugin extends JavaPlugin {
                 }
             })
             .thenAccept(ignored -> {
-                // Unvanish requester after n ticks
                 getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
-                    if (superVanishLoaded.test(getServer())) VanishAPI.showPlayer(tpRequester);
+                    // TODO: unvanish requester
                 }, Config.unvanishDelayTicks());
             });
     }

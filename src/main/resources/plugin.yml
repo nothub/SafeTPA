@@ -1,12 +1,11 @@
-name: "${project.name}"
-version: "${project.version}"
-description: "${project.description}"
-website: "${project.url}"
+name: "SafeTPA"
+version: "@VERSION@"
+description: "Minecraft self-service teleport requests"
+website: "https://github.com/nothub/SafeTPA/"
 author: 'nothub'
 authors: [ 'AlexProgrammerDE', 'MaybeEther', 'SooStrator' ]
 main: 'lol.hub.safetpa.Plugin'
 api-version: '1.20'
-softdepend: [ 'SuperVanish' ]
 
 commands:
   tpa:

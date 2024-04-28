@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'xyz.jpenilla.run-paper' version '2.2.4'
+}
+
+group = 'lol.hub'
+version = '4.0.0-INDEV'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
+        content {
+            includeGroup 'io.papermc.paper'
+            includeGroup 'net.kyori'
+            includeGroup 'net.md-5'
+        }
+    }
+    maven {
+        url = 'https://repo.dmulloy2.net/repository/public/'
+        content {
+            includeGroup 'com.comphenix.protocol'
+        }
+    }
+}
+
+dependencies {
+    compileOnly group: 'io.papermc.paper', name: 'paper-api', version: "${project.minecraft_version}-R0.1-SNAPSHOT"
+    shadow group: 'com.comphenix.protocol', name: 'ProtocolLib', version: "5.1.0"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+tasks.withType(JavaCompile).configureEach {
+    it.sourceCompatibility = it.targetCompatibility = JavaVersion.toVersion(17)
+    it.options.release = 17
+    it.options.encoding = 'UTF-8'
+}
+
+processResources {
+    filteringCharset "UTF-8"
+    filesMatching("plugin.yml") {
+        filter { line -> line.replace("@VERSION@", project.version) }
+    }
+}
+
+// https://imperceptiblethoughts.com/shadow/
+shadowJar {
+    configurations = [project.configurations.shadow]
+    archiveFileName = "${project.name}-${project.version}+${project.minecraft_version}-paper.jar"
+    destinationDirectory = layout.buildDirectory.dir('dist')
+
+    relocate 'com.comphenix.protocol', 'lol.hub.safetpa.shaded.protolib'
+
+    // delete unshaded jar
+    doLast {
+        file(jar.archiveFile).delete()
+    }
+}
+build.finalizedBy(shadowJar)
+
+tasks {
+    runServer {
+        runDirectory = layout.projectDirectory.dir('run')
+        minecraftVersion(project.minecraft_version)
+        dependsOn('build')
+        systemProperty('com.mojang.eula.agree', 'true')
+    }
+}
