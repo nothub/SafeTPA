@@ -12,6 +12,7 @@ repositories {
     maven {
         url = 'https://repo.papermc.io/repository/maven-public/'
         content {
+            includeGroup 'com.mojang'
             includeGroup 'io.papermc.paper'
             includeGroup 'net.kyori'
             includeGroup 'net.md-5'
