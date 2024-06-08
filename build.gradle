@@ -31,11 +31,11 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 tasks.withType(JavaCompile).configureEach {
-    it.sourceCompatibility = it.targetCompatibility = JavaVersion.toVersion(17)
-    it.options.release = 17
+    it.sourceCompatibility = it.targetCompatibility = JavaVersion.toVersion(21)
+    it.options.release = 21
     it.options.encoding = 'UTF-8'
 }
 
